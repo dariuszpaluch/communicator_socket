@@ -6,3 +6,11 @@ C:\Users\dariu\Documents\communicator-socket\communicator-socket\CommunicatorSoc
 C:\Users\dariu\Documents\communicator-socket\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.csproj.GenerateResource.Cache
 C:\Users\dariu\Documents\communicator-socket\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.exe
 C:\Users\dariu\Documents\communicator-socket\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.pdb
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\bin\Debug\CommunicatorSocket.exe.config
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.exe
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.pdb
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\bin\Debug\CommunicatorSocket.exe
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\bin\Debug\CommunicatorSocket.pdb
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.csprojResolveAssemblyReference.cache
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.Properties.Resources.resources
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.csproj.GenerateResource.Cache
