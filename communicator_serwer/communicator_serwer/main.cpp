@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -25,7 +26,7 @@ void childend(int signo) {
 
 
 int main(int argc, const char * argv[]) {
-    std::string buf = "Dariusz Paluch\n";
+    std::string buf = "3;FajnyNick;05.01.2016 21:44;Jestem taki fajnt fajny fajny\na to druga linia mojej fajnosci";
     std::string buf2 = "Unknown\n";
     std::string bufread = "";
     bufread.resize(10);
@@ -53,14 +54,14 @@ int main(int argc, const char * argv[]) {
             printf("Accept: %d", fd2);
             printf("new connection: %s:%i\n", inet_ntoa((struct in_addr)message.sin_addr), message.sin_port);
             
-            read(fd2, &bufread[0], 9);
-            std::cout << bufread << std::endl;
-            if(bufread.compare("117225")) {
+            //read(fd2, &bufread[0], 9);
+            //std::cout << bufread << std::endl;
+            //if(bufread.compare("117225")) {
             
-                write(fd2, &buf,sizeof(buf));
-            } else {
-                write(fd2, &buf2,sizeof(buf2));
-            }
+                write(fd2, &buf[0],buf.size());
+           // } else {
+              //  write(fd2, &buf2[0],buf2.size());
+            //}
             
             
             close(fd2);
