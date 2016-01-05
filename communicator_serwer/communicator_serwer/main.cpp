@@ -19,6 +19,8 @@
 #include <iostream>
 #include <string>
 
+#include "Communication.hpp"
+
 void childend(int signo) {
     wait(NULL);
     printf("*** END CHILD\n");
@@ -51,13 +53,15 @@ int main(int argc, const char * argv[]) {
         int fd2 = accept(fd, (struct sockaddr*) &message, (socklen_t *) &size);
         if (!fork()) {
             close(fd);
+
             printf("Accept: %d", fd2);
             printf("new connection: %s:%i\n", inet_ntoa((struct in_addr)message.sin_addr), message.sin_port);
             
             //read(fd2, &bufread[0], 9);
             //std::cout << bufread << std::endl;
             //if(bufread.compare("117225")) {
-            
+            Communication *test = new Communication();
+            std::cout << test->testowa(2) << std::endl;
                 write(fd2, &buf[0],buf.size());
            // } else {
               //  write(fd2, &buf2[0],buf2.size());
