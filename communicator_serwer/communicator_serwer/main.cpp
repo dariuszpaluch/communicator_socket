@@ -21,48 +21,37 @@
 
 #include "Communication.hpp"
 
-void childend(int signo) {
-    wait(NULL);
-    printf("*** END CHILD\n");
-}
+
 
 
 int main(int argc, const char * argv[]) {
     std::string buf = "3;FajnyNick;05.01.2016 21:44;Jestem taki fajnt fajny fajny\na to druga linia mojej fajnosci";
     std::string buf2 = "Unknown\n";
     std::string bufread = "";
-    bufread.resize(10);
-    int fd = socket(AF_INET, SOCK_STREAM, 0);
-    int n,n2, on;
-    struct sockaddr_in sa;
+    bufread.resize(1001);
     
-    signal(SIGCHLD, childend);
     
-    sa.sin_family = AF_INET;
-    sa.sin_port = htons(1234);
-    sa.sin_addr.s_addr = INADDR_ANY;
-    
-    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char*)&on, sizeof(on));
-    bind(fd, (struct sockaddr*) &sa, sizeof(sa));
-    listen(fd, 5);
-    
+    Communication *communication = new Communication();
+    communication->init();
+
+       
     struct sockaddr_in message;
     
     while(1) {
         int size = sizeof(message);
-        int fd2 = accept(fd, (struct sockaddr*) &message, (socklen_t *) &size);
+        int fd2 = accept(communication->getFd(), (struct sockaddr*) &message, (socklen_t *) &size);
         if (!fork()) {
-            close(fd);
+            close(communication->getFd());
 
             printf("Accept: %d", fd2);
             printf("new connection: %s:%i\n", inet_ntoa((struct in_addr)message.sin_addr), message.sin_port);
             
-            //read(fd2, &bufread[0], 9);
+           
+            communication->receive(fd2);
             //std::cout << bufread << std::endl;
             //if(bufread.compare("117225")) {
-            Communication *test = new Communication();
-            std::cout << test->testowa(2) << std::endl;
-                write(fd2, &buf[0],buf.size());
+            communication->send(fd2, buf);
+           
            // } else {
               //  write(fd2, &buf2[0],buf2.size());
             //}
@@ -79,7 +68,7 @@ int main(int argc, const char * argv[]) {
     //buf[n] = '\0';
     //printf("%s", buf);
     
-    close(fd);
+    close(communication->getFd());
     return 0;
 }
 
