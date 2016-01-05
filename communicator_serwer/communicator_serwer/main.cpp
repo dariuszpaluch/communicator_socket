@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -18,48 +19,48 @@
 #include <iostream>
 #include <string>
 
-void childend(int signo) {
-    wait(NULL);
-    printf("*** END CHILD\n");
-}
+#include "Communication.hpp"
 
+#define TYPE_LOGIN 1
+#define TYPE_GET_CONTACTS 2
+#define TYPE_SEND_MSG 3
+#define TYPE_LOGOUT 4
 
 int main(int argc, const char * argv[]) {
-    std::string buf = "Dariusz Paluch\n";
-    std::string buf2 = "Unknown\n";
-    std::string bufread = "";
-    bufread.resize(10);
-    int fd = socket(AF_INET, SOCK_STREAM, 0);
-    int n,n2, on;
-    struct sockaddr_in sa;
+    std::string buf = "3;FajnyNick;05.01.2016 21:44;Jestem taki fajnt fajny fajny\na to druga linia mojej fajnosci";
+    std::string buf2 = "1;tokenniksdks";
     
-    signal(SIGCHLD, childend);
-    
-    sa.sin_family = AF_INET;
-    sa.sin_port = htons(1234);
-    sa.sin_addr.s_addr = INADDR_ANY;
-    
-    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char*)&on, sizeof(on));
-    bind(fd, (struct sockaddr*) &sa, sizeof(sa));
-    listen(fd, 5);
-    
+    Communication *communication = new Communication();
+    communication->init();
+
     struct sockaddr_in message;
     
     while(1) {
         int size = sizeof(message);
-        int fd2 = accept(fd, (struct sockaddr*) &message, (socklen_t *) &size);
+        int fd2 = accept(communication->getFd(), (struct sockaddr*) &message, (socklen_t *) &size);
         if (!fork()) {
-            close(fd);
+            close(communication->getFd());
+
             printf("Accept: %d", fd2);
             printf("new connection: %s:%i\n", inet_ntoa((struct in_addr)message.sin_addr), message.sin_port);
             
-            read(fd2, &bufread[0], 9);
-            std::cout << bufread << std::endl;
-            if(bufread.compare("117225")) {
-            
-                write(fd2, &buf,sizeof(buf));
-            } else {
-                write(fd2, &buf2,sizeof(buf2));
+            communication->receive(fd2);
+            std::cout << "Received data: " << communication->getBufRead() << std::endl;
+            std::cout << "Type of received data: " << communication->getTypeOfReceived() << std::endl;
+            switch (communication->getTypeOfReceived()) {
+                case TYPE_LOGIN:
+                    communication->send(fd2, buf2);
+                    break;
+                case TYPE_GET_CONTACTS:
+                    break;
+                case TYPE_SEND_MSG:
+                    communication->send(fd2, buf);
+                    break;
+                case TYPE_LOGOUT:
+                    break;
+                    
+                default:
+                    break;
             }
             
             
@@ -69,12 +70,6 @@ int main(int argc, const char * argv[]) {
         close(fd2);
     }
     
-    //write(fd, buf, 10);
-    //n = read(fd, buf, sizeof(buf));
-    //buf[n] = '\0';
-    //printf("%s", buf);
-    
-    close(fd);
+    close(communication->getFd());
     return 0;
 }
-
