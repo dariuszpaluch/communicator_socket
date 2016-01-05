@@ -23,6 +23,7 @@
 
 int main(int argc, const char * argv[]) {
     std::string buf = "3;FajnyNick;05.01.2016 21:44;Jestem taki fajnt fajny fajny\na to druga linia mojej fajnosci";
+    std::string buf2 = "1;tokenniksdks";
     
     Communication *communication = new Communication();
     communication->init();
@@ -40,9 +41,22 @@ int main(int argc, const char * argv[]) {
             
            
             communication->receive(fd2);
+            std::cout << "Received data: " << communication->getBufRead() << std::endl;
+            std::cout << "Type of received data: " << communication->getTypeOfReceived() << std::endl;
+            switch (communication->getTypeOfReceived()) {
+                case 1:
+                    communication->send(fd2, buf2);
+                    break;
+                case 3:
+                    communication->send(fd2, buf);
+                    break;
+                    
+                default:
+                    break;
+            }
             //std::cout << bufread << std::endl;
             //if(bufread.compare("117225")) {
-            communication->send(fd2, buf);
+            
            
            // } else {
               //  write(fd2, &buf2[0],buf2.size());

@@ -36,7 +36,8 @@ void Communication::init() {
 
 void Communication::receive(int fd) {
     read(fd, &bufread[0], 1000);
-    
+    bufread = static_cast<std::string>(bufread);
+    typeOfReceived = bufread[0] - '0';
 }
 
 void Communication::send(int fd, std::string text) {
@@ -49,4 +50,8 @@ int Communication::getFd() {
 
 std::string Communication::getBufRead() {
     return bufread;
+}
+
+int Communication::getTypeOfReceived() {
+    return typeOfReceived;
 }

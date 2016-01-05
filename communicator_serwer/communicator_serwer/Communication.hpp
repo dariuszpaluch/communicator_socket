@@ -29,6 +29,7 @@ class Communication {
     int fd;
     std::string bufread;
     static void childend(int signo);
+    int typeOfReceived;
     
 public:
     
@@ -38,5 +39,6 @@ public:
     void receive(int fd);
     int getFd();
     std::string getBufRead();
+    int getTypeOfReceived();
     
 };
