@@ -21,6 +21,11 @@
 
 #include "Communication.hpp"
 
+#define TYPE_LOGIN 1
+#define TYPE_GET_CONTACTS 2
+#define TYPE_SEND_MSG 3
+#define TYPE_LOGOUT 4
+
 int main(int argc, const char * argv[]) {
     std::string buf = "3;FajnyNick;05.01.2016 21:44;Jestem taki fajnt fajny fajny\na to druga linia mojej fajnosci";
     std::string buf2 = "1;tokenniksdks";
@@ -44,11 +49,15 @@ int main(int argc, const char * argv[]) {
             std::cout << "Received data: " << communication->getBufRead() << std::endl;
             std::cout << "Type of received data: " << communication->getTypeOfReceived() << std::endl;
             switch (communication->getTypeOfReceived()) {
-                case 1:
+                case TYPE_LOGIN:
                     communication->send(fd2, buf2);
                     break;
-                case 3:
+                case TYPE_GET_CONTACTS:
+                    break;
+                case TYPE_SEND_MSG:
                     communication->send(fd2, buf);
+                    break;
+                case TYPE_LOGOUT:
                     break;
                     
                 default:
