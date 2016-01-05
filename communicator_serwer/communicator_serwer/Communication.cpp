@@ -9,7 +9,7 @@
 #include "Communication.hpp"
 
 Communication::Communication() {
-    
+    bufread.resize(1001);
 };
 
 void Communication::childend(int signo) {
@@ -35,11 +35,12 @@ void Communication::init() {
 };
 
 void Communication::receive(int fd) {
-     read(fd, &bufread[0], 1000);
+    read(fd, &bufread[0], 1000);
+    
 }
 
 void Communication::send(int fd, std::string text) {
-     write(fd, &text[0],text.size());
+    write(fd, &text[0],text.size());
 }
 
 int Communication::getFd() {

@@ -21,20 +21,12 @@
 
 #include "Communication.hpp"
 
-
-
-
 int main(int argc, const char * argv[]) {
     std::string buf = "3;FajnyNick;05.01.2016 21:44;Jestem taki fajnt fajny fajny\na to druga linia mojej fajnosci";
-    std::string buf2 = "Unknown\n";
-    std::string bufread = "";
-    bufread.resize(1001);
-    
     
     Communication *communication = new Communication();
     communication->init();
 
-       
     struct sockaddr_in message;
     
     while(1) {
@@ -71,4 +63,3 @@ int main(int argc, const char * argv[]) {
     close(communication->getFd());
     return 0;
 }
-
