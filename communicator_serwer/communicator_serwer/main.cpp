@@ -44,7 +44,6 @@ int main(int argc, const char * argv[]) {
             printf("Accept: %d", fd2);
             printf("new connection: %s:%i\n", inet_ntoa((struct in_addr)message.sin_addr), message.sin_port);
             
-           
             communication->receive(fd2);
             std::cout << "Received data: " << communication->getBufRead() << std::endl;
             std::cout << "Type of received data: " << communication->getTypeOfReceived() << std::endl;
@@ -63,13 +62,6 @@ int main(int argc, const char * argv[]) {
                 default:
                     break;
             }
-            //std::cout << bufread << std::endl;
-            //if(bufread.compare("117225")) {
-            
-           
-           // } else {
-              //  write(fd2, &buf2[0],buf2.size());
-            //}
             
             
             close(fd2);
@@ -77,11 +69,6 @@ int main(int argc, const char * argv[]) {
         }
         close(fd2);
     }
-    
-    //write(fd, buf, 10);
-    //n = read(fd, buf, sizeof(buf));
-    //buf[n] = '\0';
-    //printf("%s", buf);
     
     close(communication->getFd());
     return 0;
