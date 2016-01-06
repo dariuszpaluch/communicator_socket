@@ -20,13 +20,15 @@
 #include <sys/select.h>
 #include <unistd.h>
 
+#include "Communication.hpp"
+
 #define SERVER_PORT 1234
 #define QUEUE_SIZE 5
 
 int main(int argc, char* argv[])
 {
-    char buf2[7] = "";
-    int nSocket, nClientSocket;
+    Communication *communication = new Communication();
+    int nSocket, nClientSocket=0;
     int nBind, nListen;
     int nFoo = 1, nTmp, nMaxfd, nFound, nFd;
     struct sockaddr_in stAddr, stClientAddr;
@@ -106,15 +108,17 @@ int main(int argc, char* argv[])
         {
             if (FD_ISSET(nFd, &fsWmask))
             {
-                std::cout << nFd << std::endl;
-                read(nFd, buf2, 7);
-                if(strncmp("117182", buf2, 6) == 0) {
-                    write(nFd, "Tomasz Tomys\n", 13);
+                communication->receive(nFd);
+                std::cout << communication->getBufRead() << std::endl;
+                std::string indeks = "117225";
+                if(indeks.compare(communication->getBufRead()) == 0) {
+                    std::string toSend = "Dariusz Paluch\n";
+                    communication->send(nClientSocket, toSend);
                 } else {
-                    write(nFd, "Unknown!\n", 9);
+                    std::string toSend = "Unknown\n";
+                    communication->send(nClientSocket, toSend);
                 }
-                printf("%s: [sending string to %s]\n", argv[0],
-                       inet_ntoa((struct in_addr)stClientAddr.sin_addr));
+                printf("[sending string to %s]\n", inet_ntoa((struct in_addr)stClientAddr.sin_addr));
                 
                 FD_CLR(nFd, &fsMask);
                 close(nFd);
@@ -122,6 +126,5 @@ int main(int argc, char* argv[])
         }
     }
     
-    close(nSocket);
     return(0);
 }
