@@ -14,6 +14,7 @@ Communication::Communication() {
 
 void Communication::receive(int fd) {
     bufread.clear();
+    bufread.resize(1001);
     read(fd, &bufread[0], 1000);
     bufread = static_cast<std::string>(bufread);
     typeOfReceived = bufread[0] - '0';
