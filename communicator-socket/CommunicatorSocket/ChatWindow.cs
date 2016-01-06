@@ -10,9 +10,10 @@ namespace CommunicatorSocket
 {
     public partial class ChatWindow : Form
     {
-        public ChatWindow()
+        public ChatWindow(string text)
         {
             InitializeComponent();
+            this.Text = text;
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -25,7 +26,17 @@ namespace CommunicatorSocket
 
         }
 
+        public void funData(String text)
+        {
+            MessageLabel.Text = text;
+        }
+
         private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ChatWindow_Load(object sender, EventArgs e)
         {
 
         }

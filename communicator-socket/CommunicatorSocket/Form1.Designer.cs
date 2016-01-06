@@ -61,7 +61,7 @@
             // 
             this.textBoxPort.Location = new System.Drawing.Point(158, 49);
             this.textBoxPort.Name = "textBoxPort";
-            this.textBoxPort.Size = new System.Drawing.Size(100, 20);
+            this.textBoxPort.Size = new System.Drawing.Size(198, 20);
             this.textBoxPort.TabIndex = 2;
             this.textBoxPort.Text = "1234";
             // 
@@ -80,7 +80,8 @@
             this.textBoxAddr.Name = "textBoxAddr";
             this.textBoxAddr.Size = new System.Drawing.Size(198, 20);
             this.textBoxAddr.TabIndex = 1;
-            this.textBoxAddr.Text = "localhost";
+            this.textBoxAddr.Text = "vps.tomys.pl";
+            this.textBoxAddr.TextChanged += new System.EventHandler(this.textBoxAddr_TextChanged);
             // 
             // buttonGetDate
             // 
@@ -126,10 +127,10 @@
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip.Location = new System.Drawing.Point(0, 210);
+            this.statusStrip.Location = new System.Drawing.Point(0, 205);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.ManagerRenderMode;
-            this.statusStrip.Size = new System.Drawing.Size(395, 22);
+            this.statusStrip.Size = new System.Drawing.Size(387, 22);
             this.statusStrip.TabIndex = 0;
             this.statusStrip.Text = "statusStrip";
             // 
@@ -142,7 +143,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(395, 232);
+            this.ClientSize = new System.Drawing.Size(387, 227);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);

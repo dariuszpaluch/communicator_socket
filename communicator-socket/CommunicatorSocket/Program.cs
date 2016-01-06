@@ -12,9 +12,16 @@ namespace CommunicatorSocket
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Console.WriteLine("DAREK");
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+            //Form1 form1 = new Form1();
+            //Application.Run(form1);
+            Serwer serwer = new Serwer("vps.tomys.pl", "1234");
+            serwer.connection();
+            while (true)
+            {
+            }
         }
     }
 }

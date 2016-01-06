@@ -25,3 +25,7 @@ C:\Users\Tomasz Tomys\communicator_socket_ttomys\communicator-socket\Communicato
 C:\Users\Tomasz Tomys\communicator_socket_ttomys\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.MessagesWindows.resources
 C:\Users\Tomasz Tomys\communicator_socket_ttomys\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.Properties.Resources.resources
 C:\Users\Tomasz Tomys\communicator_socket_ttomys\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.csproj.GenerateResource.Cache
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.ChatWindow.resources
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.MainWindow.resources
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.MessagesWindows.resources
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.Form1.resources

@@ -20,6 +20,7 @@ namespace CommunicatorSocket
         delegate void setThreadedTextBoxCallback(String text);
         delegate void setThreadedStatusLabelCallback(String text);
         delegate void setThreadedButtonCallback(bool status);
+        public delegate void delPassData(String text);
 
         public Form1()
         {
@@ -41,7 +42,7 @@ namespace CommunicatorSocket
             }
         }
 
-        private void setThreadedStatusLabel(String text)
+        public void setThreadedStatusLabel(String text)
         {
             if (this.statusStrip.InvokeRequired)
             {
@@ -56,7 +57,7 @@ namespace CommunicatorSocket
 
         private void setThreadedButton(bool status)
         {
-            if (this.buttonGetDate.InvokeRequired)
+            if (this.buttonGetDate.InvokeRequired) // sprawdzenie czy to z tego wątku czy z innego
             {
                 setThreadedButtonCallback buttonCallback = new setThreadedButtonCallback(setThreadedButton);
                 this.obj.Invoke(buttonCallback, status);
@@ -90,9 +91,23 @@ namespace CommunicatorSocket
                     /* all the data has arrived */
                     if (state.m_StringBuilder.Length > 1)
                     {
-                        setThreadedTextBox(state.m_StringBuilder.ToString());
+                        string message = state.m_StringBuilder.ToString();
+                        string[] messageSplit = message.Split(';');
+                        string status = messageSplit[0];
+                        string name = messageSplit[1];
+                        string userMessage = messageSplit[2];
+
+                        setThreadedTextBox(message);
                         setThreadedStatusLabel("Done.");
                         setThreadedButton(true);
+                        ChatWindow chat = new ChatWindow(name);
+
+                        delPassData del = new delPassData(chat.funData);
+                        del("SUPER MAN");
+                        //chat.Show();
+                        Application.Run(chat);
+                        del("DAREK");
+
 
                         /* shutdown and close socket */
                         socketFd.Shutdown(SocketShutdown.Both);
@@ -125,6 +140,7 @@ namespace CommunicatorSocket
                 setThreadedStatusLabel("Wait! Reading...");
 
                 /* begin receiving the data */
+                //odczytywanie danych
                 socketFd.BeginReceive(state.m_DataBuf, 0, SocketStateObject.BUF_SIZE, 0, new AsyncCallback(ReceiveCallback), state);
             }
             catch (Exception exc)
@@ -157,6 +173,7 @@ namespace CommunicatorSocket
                 setThreadedStatusLabel("Wait! Connecting...");
 
                 /* connect to the server */
+                //jeśli połączy się to odpali ConnectCallback
                 socketFd.BeginConnect(endPoint, new AsyncCallback(ConnectCallback), socketFd);
             }
             catch (Exception exc)
@@ -175,6 +192,7 @@ namespace CommunicatorSocket
                 setThreadedTextBox("");
                 setThreadedStatusLabel("Wait! DNS query...");
 
+                //jeśli wpisany port i ip
                 if (this.textBoxAddr.Text.Length > 0 && this.textBoxPort.Text.Length > 0)
                 {
                     /* get DNS host information */
@@ -195,6 +213,16 @@ namespace CommunicatorSocket
                 setThreadedStatusLabel("Check \"Server Info\" and try again!");
                 setThreadedButton(true);
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBoxAddr_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 
