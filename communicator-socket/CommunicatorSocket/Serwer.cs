@@ -13,9 +13,16 @@ namespace CommunicatorSocket
 {
     public class Serwer
     {
+        public const int TYPE_LOGIN = 1;
+        public const int TYPE_CONTACTS = 2;
+        public const int TYPE_MESSAGE = 3;
+        public const int TYPE_LOGOUT = 4;
+
         private string address;
         private string port;
         private Socket socketFd;
+        private Login login;
+        private string userToken;
 
         public Serwer(string address, string port)
         {
@@ -60,7 +67,69 @@ namespace CommunicatorSocket
             byte[] byteData = Encoding.ASCII.GetBytes("WIADOMOSC OD: " + nick + "Tresc:" + message);
             //byte[] byteData = Encoding.ASCII.GetBytes("117225");
             this.socketFd.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), this.socketFd);
+        }
 
+        private void sendData(int type, string data)
+        {
+            byte[] byteData = Encoding.ASCII.GetBytes(type + ";" + data + "|");
+            this.socketFd.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), this.socketFd);
+        }
+
+        public void loginInUser(string login, string password)
+        {
+            string data = login + ';' + password;
+            this.sendData(TYPE_LOGIN, data);
+
+        }
+
+        private void handleLoginAnswer(string data)
+        {
+            string[] messageSplit = data.Split(';');
+            string status = messageSplit[1];
+            string message = messageSplit[2];
+
+            Console.WriteLine(status);
+
+            if (Int32.Parse(status) == 1)
+            {
+                this.userToken = message;
+                this.login.setThreadedCloseForm();
+            }
+            else
+            {
+                this.login.setThreadedErrorLabel(message);
+            }
+        }
+
+        private void parsingReceiveData(string data)
+        {
+            string[] parsingData = data.Split('|');
+
+            for (int i = 0; i < parsingData.Length; i++)
+            {
+                if (parsingData[i].Length > 0)
+                {
+                    this.handleAnswers(parsingData[i]);
+                }
+            }
+        }
+
+        private void handleAnswers(string data)
+        {
+            int status = Int32.Parse(data.Split(';')[0]);
+            Console.WriteLine("OTRZYMAŁEM WIADOMOŚ O STATUSIE: " + status);
+            if (status == TYPE_LOGIN) Console.WriteLine("DAREK");
+            switch (status)
+            {
+                case TYPE_LOGIN:
+                    Console.WriteLine("LOGIN RECEIVE");
+                    this.handleLoginAnswer(data);
+                    break;
+
+                default:
+                    Console.WriteLine("NIE ZROZUMIALA WIADOMOSC");
+                    break;
+            }
         }
 
         private void ReceiveCallback(IAsyncResult ar)
@@ -80,7 +149,9 @@ namespace CommunicatorSocket
                     //Console.WriteLine(state.m_StringBuilder.ToString());
                     //Console.WriteLine("Otrzymałem jakąś wiadomość");
                     string message = state.m_StringBuilder.ToString();
-                    this.receiveMessage(message);         
+                    //this.receiveMessage(message);     
+                    //this.handleAnswers(message);
+                    this.parsingReceiveData(message);
                     /* get the rest of the data */
                     //socketFd.BeginReceive(state.m_DataBuf, 0, SocketStateObject.BUF_SIZE, 0, new AsyncCallback(ReceiveCallback), state);
                 }
@@ -91,7 +162,8 @@ namespace CommunicatorSocket
                     {
                         Console.WriteLine("Otrzymałem jakąś wiadomość");
                         string message = state.m_StringBuilder.ToString();
-                        this.receiveMessage(message);
+                        //this.receiveMessage(message);
+                        this.parsingReceiveData(message);
                         this.readMessages();
                     }
 
@@ -128,7 +200,7 @@ namespace CommunicatorSocket
 
                 Console.WriteLine("Connected");
 
-                ChatWindow chat = new ChatWindow("Darek", this);
+                //ChatWindow chat = new ChatWindow("Darek", this);
 
                 ////delPassData del = new delPassData(chat.funData);
                 ////chat.Show();
@@ -137,8 +209,11 @@ namespace CommunicatorSocket
                 //odmierzacz.Interval = 5000; //Ustawienie przerywania na 1000ms (1s)
                 //odmierzacz.Elapsed += new ElapsedEventHandler(this.wykonujMnieCoJakisCzas); //Przypisanie metody
                 //odmierzacz.Start(); //Start timera
-                this.readMessages();
-                Application.Run(chat);
+                //this.readMessages();
+                //Application.Run(chat);
+                this.login = new Login(this);
+                Application.Run(this.login);
+
 
               
                 //Console.ReadKey();
