@@ -36,6 +36,7 @@
             // 
             // MessagesRichTextBox
             // 
+            this.MessagesRichTextBox.Enabled = false;
             this.MessagesRichTextBox.Location = new System.Drawing.Point(12, 12);
             this.MessagesRichTextBox.Name = "MessagesRichTextBox";
             this.MessagesRichTextBox.Size = new System.Drawing.Size(560, 350);

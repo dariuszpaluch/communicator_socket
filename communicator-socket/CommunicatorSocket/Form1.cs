@@ -100,18 +100,18 @@ namespace CommunicatorSocket
                         setThreadedTextBox(message);
                         setThreadedStatusLabel("Done.");
                         setThreadedButton(true);
-                        ChatWindow chat = new ChatWindow(name);
+                        //ChatWindow chat = new ChatWindow(name, this);
 
-                        delPassData del = new delPassData(chat.funData);
-                        del("SUPER MAN");
-                        //chat.Show();
-                        Application.Run(chat);
-                        del("DAREK");
+                        //delPassData del = new delPassData(chat.funData);
+                        //del("SUPER MAN");
+                        ////chat.Show();
+                        //Application.Run(chat);
+                        //del("DAREK");
 
 
-                        /* shutdown and close socket */
-                        socketFd.Shutdown(SocketShutdown.Both);
-                        socketFd.Close();
+                        ///* shutdown and close socket */
+                        //socketFd.Shutdown(SocketShutdown.Both);
+                        //socketFd.Close();
                     }
                 }
             }
