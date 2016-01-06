@@ -22,6 +22,7 @@ namespace CommunicatorSocket
         private string port;
         private Socket socketFd;
         private Login login;
+        private MainWindow mainWindow;
         private string userToken;
 
         public Serwer(string address, string port)
@@ -79,7 +80,6 @@ namespace CommunicatorSocket
         {
             string data = login + ';' + password;
             this.sendData(TYPE_LOGIN, data);
-
         }
 
         private void handleLoginAnswer(string data)
@@ -94,6 +94,13 @@ namespace CommunicatorSocket
             {
                 this.userToken = message;
                 this.login.setThreadedCloseForm();
+                this.mainWindow = new MainWindow(this);
+
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(this.mainWindow);
+                this.readMessages();
+                this.readMessages();
             }
             else
             {
@@ -114,6 +121,16 @@ namespace CommunicatorSocket
             }
         }
 
+        private void handleContacts(string data)
+        {
+            string[] allContacts = data.Split(';');
+
+            for (int i = 1; i < allContacts.Length; i++)
+            {
+                this.mainWindow.addContact(allContacts[i]);
+            }
+        }
+
         private void handleAnswers(string data)
         {
             int status = Int32.Parse(data.Split(';')[0]);
@@ -122,14 +139,19 @@ namespace CommunicatorSocket
             switch (status)
             {
                 case TYPE_LOGIN:
-                    Console.WriteLine("LOGIN RECEIVE");
+                    Console.WriteLine("LOGIN");
                     this.handleLoginAnswer(data);
+                    break;
+                case TYPE_CONTACTS:
+                    Console.WriteLine("CONTACTS");
+                    this.handleContacts(data);
                     break;
 
                 default:
                     Console.WriteLine("NIE ZROZUMIALA WIADOMOSC");
                     break;
             }
+
         }
 
         private void ReceiveCallback(IAsyncResult ar)
@@ -152,6 +174,7 @@ namespace CommunicatorSocket
                     //this.receiveMessage(message);     
                     //this.handleAnswers(message);
                     this.parsingReceiveData(message);
+                    this.readMessages();
                     /* get the rest of the data */
                     //socketFd.BeginReceive(state.m_DataBuf, 0, SocketStateObject.BUF_SIZE, 0, new AsyncCallback(ReceiveCallback), state);
                 }
