@@ -138,7 +138,7 @@ void* cthread(void* arg) {
             {
                 int result = login(c->cfd, communication->getBufRead());
                 if (result == 1) {
-                    text = "1;1;spoko|";
+                    text = "1;1|";
                     std::cout<<text<<std::endl;
                     communication->send(c->cfd, text);
                     break;
@@ -155,8 +155,6 @@ void* cthread(void* arg) {
                 communication->send(c->cfd, text);
                 break;
             }
-            case TYPE_GET_CONTACTS:
-                break;
             case TYPE_SEND_MSG:
                 break;
             case TYPE_LOGOUT:
