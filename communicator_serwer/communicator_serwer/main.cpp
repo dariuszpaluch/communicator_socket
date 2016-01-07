@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
 #include <arpa/inet.h>
 #include <sys/select.h>
 #include <unistd.h>
@@ -53,7 +54,6 @@ pthread_t client_threads[MAX_CLIENTS];
 void addUser(struct cln* c) {
     struct User user;
     user.fd = c->cfd;
-    
     int i = 0;
     for (i=0; i<=MAX_CLIENTS; i++) {
         if (!users[i].fd) {
@@ -80,17 +80,32 @@ int findUserByFd (int fd) {
     int i = 0;
     int clientIndex = -1;
     for (i=0; i<=MAX_CLIENTS; i++) {
-        if(users[i].fd == 0) {
+        if(users[i].fd == fd) {
             clientIndex = i;
+            break;
         }
     }
-    
+
     return clientIndex;
+}
+
+std::string getContacts () {
+    std::stringstream ss;
+    int i = 0;
+    for (i=0; i<=MAX_CLIENTS; i++) {
+        if (users[i].name.size() < 1) {
+            break;
+        }
+        ss << users[i].name << ";";
+    }
+    std::string s = ss.str();
+    std::string st = s.substr(0, s.size()-1);
+    
+    return st;
 }
 
 void createUser(int fd, std::string name, std::string password) {
     int clientIndex = findUserByFd(fd);
-    
     users[clientIndex].name = name;
     users[clientIndex].password = password;
 }
@@ -119,6 +134,7 @@ int login(int fd, std::string receivedData) {
     std::cout <<password << "--" << users[clientIndex].password << std::endl;
     if((name.compare(users[clientIndex].name) == 0) &&
        (password.compare(users[clientIndex].password) == 0)) {
+        users[clientIndex].fd = fd;
         return 1;
     }
     return 0;
@@ -130,6 +146,7 @@ void* cthread(void* arg) {
     Communication *communication = new Communication();
     std::string text = "";
     addUser(c);
+
     while(1) {
         communication->receive(c->cfd);
         std::cout<<communication->getBufRead() <<std::endl;
@@ -141,6 +158,18 @@ void* cthread(void* arg) {
                     text = "1;1|";
                     std::cout<<text<<std::endl;
                     communication->send(c->cfd, text);
+                    
+                    std::stringstream ss;
+                    ss << "2;" << getContacts() << "|";
+                    std::string contacts = ss.str();
+                    int i = 0;
+                    for (i=0; i<=MAX_CLIENTS; i++) {
+                        if (!users[i].fd) {
+                            break;
+                        }
+                        std::cout << "send: " << contacts << std::endl;
+                        communication->send(users[i].fd, contacts);
+                    }
                     break;
                 }
                 if (result == 0) {
