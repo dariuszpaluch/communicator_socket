@@ -36,6 +36,7 @@
             // 
             // MessagesRichTextBox
             // 
+            this.MessagesRichTextBox.Enabled = false;
             this.MessagesRichTextBox.Location = new System.Drawing.Point(12, 12);
             this.MessagesRichTextBox.Name = "MessagesRichTextBox";
             this.MessagesRichTextBox.Size = new System.Drawing.Size(560, 350);
@@ -82,6 +83,7 @@
             this.Controls.Add(this.MessagesRichTextBox);
             this.Name = "ChatWindow";
             this.Text = "Okno wiadomości - Darek";
+            this.Load += new System.EventHandler(this.ChatWindow_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -89,7 +91,7 @@
 
         #endregion
 
-        private System.Windows.Forms.RichTextBox MessagesRichTextBox;
+        public System.Windows.Forms.RichTextBox MessagesRichTextBox;
         private System.Windows.Forms.TextBox MessageTextBox;
         private System.Windows.Forms.Button SendButton;
         private System.Windows.Forms.Label MessageLabel;
