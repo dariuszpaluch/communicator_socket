@@ -10,7 +10,7 @@ namespace CommunicatorSocket
 {
     public partial class MainWindow : Form
     {
-        delegate void setThreadedAddContactCallback(String nick);
+        delegate void setThreadedAddContactCallback(string nick);
         Form obj;
         private Serwer serwer;
         public MainWindow(Serwer serwer)
@@ -19,16 +19,16 @@ namespace CommunicatorSocket
             this.obj = this;
             this.serwer = serwer;
         }
-        public void addContact(String text)
+        public void addContact(string text)
         {
-            if (this.UsersRichTextBox.InvokeRequired)
+            if (this.ContactsListBox.InvokeRequired)
             {
                 setThreadedAddContactCallback statusLabelCallback = new setThreadedAddContactCallback(addContact);
                 this.obj.Invoke(statusLabelCallback, text);
             }
             else
             {
-                this.UsersRichTextBox.Text += text;
+                this.ContactsListBox.Items.Add(text);
             }
         }
 

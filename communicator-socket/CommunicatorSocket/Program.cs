@@ -19,8 +19,8 @@ namespace CommunicatorSocket
             //Application.Run(form1);
 
 
-            //Serwer serwer = new Serwer("vps.tomys.pl", "1234");
-            Serwer serwer = new Serwer("192.168.0.28", "1234");
+            Serwer serwer = new Serwer("vps.tomys.pl", "1234");
+            //Serwer serwer = new Serwer("192.168.0.28", "1234");
 
             serwer.connection();
             while (true)
