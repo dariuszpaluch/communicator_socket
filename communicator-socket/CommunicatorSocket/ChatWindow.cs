@@ -76,5 +76,11 @@ namespace CommunicatorSocket
         {
 
         }
+
+        private void ChatWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Console.WriteLine("USUWAM");
+            this.serwer.removeUser(this.nick);
+        }
     }
 }

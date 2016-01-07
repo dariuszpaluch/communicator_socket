@@ -50,5 +50,6 @@ namespace CommunicatorSocket
         {
             this.serwer.openMessageWindow(this.ContactsListBox.SelectedItem.ToString());
         }
+
     }
 }

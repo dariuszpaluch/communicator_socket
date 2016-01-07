@@ -80,7 +80,6 @@ namespace CommunicatorSocket
         {
             string[] messageSplit = data.Split(';');
             string status = messageSplit[1];
-            string message = messageSplit[2];
 
             if (Int32.Parse(status) == 1)
             {
@@ -164,6 +163,19 @@ namespace CommunicatorSocket
             if (!exist)
             {
                 this.users.Add(new User(nick, this));
+            }
+        }
+
+        public void removeUser(string nick)
+        {
+            for (int i = 0; i < this.users.Count; i++)
+            {
+                if (this.users[i].nick == nick)
+                {
+                    this.users.RemoveAt(i);
+                    break;
+                }
+
             }
         }
 
