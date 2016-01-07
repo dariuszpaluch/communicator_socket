@@ -93,10 +93,9 @@ std::string getContacts () {
     std::stringstream ss;
     int i = 0;
     for (i=0; i<=MAX_CLIENTS; i++) {
-        if (users[i].name.size() < 1) {
-            break;
+        if (users[i].name.size() > 0 ) {
+            ss << users[i].name << ";";
         }
-        ss << users[i].name << ";";
     }
     std::string s = ss.str();
     std::string st = s.substr(0, s.size()-1);
