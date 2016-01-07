@@ -13,15 +13,25 @@ using System.Threading.Tasks;
 
 namespace CommunicatorSocket
 {
-    public struct User
+    public class User
     {
         public string nick;
         public ChatWindow chat;
-
-        public void create(string nick,Serwer serwer)
+        private Serwer serwer;
+        public User(string nick,Serwer serwer)
         {
-            this.nick=nick;
+            this.nick = nick;
+            this.serwer = serwer;
             this.chat = new ChatWindow(nick, serwer);
+            var t = Task.Run(() =>
+            {
+                Application.Run(this.chat);
+            });
+        }
+
+        public void addMessage(string time, string text)
+        {
+            chat.addMessage(time, text);
         }
     }
 
@@ -74,23 +84,21 @@ namespace CommunicatorSocket
 
             if (Int32.Parse(status) == 1)
             {
-                this.userToken = message;
                 this.login.setThreadedCloseForm();
                 this.mainWindow = new MainWindow(this);
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                mainWindow.addContact("WOLSZTYN1");
                 var t = Task.Run(() =>
                 {
                     Application.Run(this.mainWindow);
                 });
-                mainWindow.addContact("WOLSZTYN");
 
             }
             else
             {
-                this.login.setThreadedErrorLabel(message);
+                if (messageSplit.Length > 2)
+                    this.login.setThreadedErrorLabel(messageSplit[2]);
             }
         }
 
@@ -109,12 +117,8 @@ namespace CommunicatorSocket
 
         private void handleContacts(string data)
         {
-            string[] allContacts = data.Split(';');
+            this.mainWindow.setContacts(data);
 
-            for (int i = 1; i < allContacts.Length; i++)
-            {
-                this.mainWindow.addContact(allContacts[i]);
-            }
         }
 
         private void handleMessage(string data)
@@ -124,13 +128,28 @@ namespace CommunicatorSocket
             string time = allData[2];
             string message = allData[3];
 
-            ChatWindow chat = new ChatWindow(nick, this);
-            chat.addMessage(time, message);
-            var t = Task.Run(() =>
+            bool exist = false;
+            for (int i = 0; i < this.users.Count; i++)
             {
-            Application.Run(chat);
-            });
-            
+                if (this.users[i].nick == nick)
+                {
+                    exist = true;
+                    this.users[i].addMessage(time, message);
+                }
+                  
+            }
+
+            if (!exist)
+            {
+                this.users.Add(new User(nick, this));
+                this.users[this.users.Count - 1].addMessage(time, message);
+            }
+
+        }
+
+        public void openNewMessageWindow(string nick)
+        {
+            this.users.Add(new User(nick, this));
         }
 
         private void handleAnswers(string data)

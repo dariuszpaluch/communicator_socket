@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.UsersPanel = new System.Windows.Forms.Panel();
+            this.ContactsListBox = new System.Windows.Forms.ListBox();
             this.MessageButton = new System.Windows.Forms.Button();
             this.UsersLabel = new System.Windows.Forms.Label();
-            this.ContactsListBox = new System.Windows.Forms.ListBox();
             this.UsersPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,6 +45,14 @@
             this.UsersPanel.Size = new System.Drawing.Size(277, 447);
             this.UsersPanel.TabIndex = 5;
             // 
+            // ContactsListBox
+            // 
+            this.ContactsListBox.FormattingEnabled = true;
+            this.ContactsListBox.Location = new System.Drawing.Point(6, 32);
+            this.ContactsListBox.Name = "ContactsListBox";
+            this.ContactsListBox.Size = new System.Drawing.Size(265, 355);
+            this.ContactsListBox.TabIndex = 6;
+            // 
             // MessageButton
             // 
             this.MessageButton.Location = new System.Drawing.Point(3, 405);
@@ -53,6 +61,7 @@
             this.MessageButton.TabIndex = 5;
             this.MessageButton.Text = "Otwórz okno rozmowy";
             this.MessageButton.UseVisualStyleBackColor = true;
+            this.MessageButton.Click += new System.EventHandler(this.MessageButton_Click);
             // 
             // UsersLabel
             // 
@@ -62,14 +71,6 @@
             this.UsersLabel.Size = new System.Drawing.Size(157, 13);
             this.UsersLabel.TabIndex = 4;
             this.UsersLabel.Text = "Lista dostępnych użytkowników";
-            // 
-            // ContactsListBox
-            // 
-            this.ContactsListBox.FormattingEnabled = true;
-            this.ContactsListBox.Location = new System.Drawing.Point(6, 32);
-            this.ContactsListBox.Name = "ContactsListBox";
-            this.ContactsListBox.Size = new System.Drawing.Size(265, 355);
-            this.ContactsListBox.TabIndex = 6;
             // 
             // MainWindow
             // 
