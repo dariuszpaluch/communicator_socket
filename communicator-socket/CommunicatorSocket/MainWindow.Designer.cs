@@ -81,6 +81,7 @@
             this.Controls.Add(this.UsersPanel);
             this.Name = "MainWindow";
             this.Text = "MainWindow";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
             this.UsersPanel.ResumeLayout(false);
             this.UsersPanel.PerformLayout();
             this.ResumeLayout(false);

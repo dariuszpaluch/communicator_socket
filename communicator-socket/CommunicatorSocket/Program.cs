@@ -23,7 +23,7 @@ namespace CommunicatorSocket
             //Serwer serwer = new Serwer("192.168.0.28", "1234");
 
             serwer.connection();
-            while (true)
+            while (serwer.work)
             {
             }
         }

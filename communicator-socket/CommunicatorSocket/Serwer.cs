@@ -49,12 +49,14 @@ namespace CommunicatorSocket
         private MainWindow mainWindow;
         private string userToken;
         private List<User> users;
+        public bool work;
 
         public Serwer(string address, string port)
         {
             this.address = address;
             this.port = port;
             this.users = new List<User>();
+            this.work = true;
         }
 
         public void sendMessage(string message, string nick)
@@ -179,6 +181,24 @@ namespace CommunicatorSocket
             }
         }
 
+        private void handleLogout(string data)
+        {
+            int status = Int32.Parse(data.Split(';')[1]);
+
+            if (status == 1)
+            {
+                this.socketFd.Shutdown(SocketShutdown.Both);
+                this.socketFd.Close();
+                this.work = false;
+            }
+
+        }
+
+        public void logoutCall()
+        {
+            this.sendData(TYPE_LOGOUT, "1");
+        }
+
         private void handleAnswers(string data)
         {
             this.readMessages();
@@ -198,6 +218,10 @@ namespace CommunicatorSocket
                 case TYPE_MESSAGE:
                     Console.WriteLine("MESSAGE");
                     this.handleMessage(data);
+                    break;
+                case TYPE_LOGOUT:
+                    Console.WriteLine("LOGOUT");
+                    this.handleLogout(data);
                     break;
 
                 default:

@@ -51,5 +51,10 @@ namespace CommunicatorSocket
             this.serwer.openMessageWindow(this.ContactsListBox.SelectedItem.ToString());
         }
 
+        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.serwer.logoutCall();
+        }
+
     }
 }
