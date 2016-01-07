@@ -26,19 +26,16 @@
 
 class Communication {
     
-    int fd;
-    std::string bufread;
-    static void childend(int signo);
     int typeOfReceived;
+    std::string bufread;
+ 
     
 public:
     
     Communication();
-    void init();
     void send(int fd, std::string text);
     void receive(int fd);
-    int getFd();
-    std::string getBufRead();
     int getTypeOfReceived();
+    std::string getBufRead();
     
 };
