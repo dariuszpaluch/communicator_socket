@@ -50,19 +50,111 @@ struct User users[MAX_CLIENTS];
 int clientsCount = 0;
 pthread_t client_threads[MAX_CLIENTS];
 
+void addUser(struct cln* c) {
+    struct User user;
+    user.fd = c->cfd;
+    
+    int i = 0;
+    for (i=0; i<=MAX_CLIENTS; i++) {
+        if (!users[i].fd) {
+            users[i] = user;
+            break;
+        }
+    }
+}
+
+int findUserByName (std::string name) {
+    int i = 0;
+    int clientIndex = -1;
+    for (i=0; i<=MAX_CLIENTS; i++) {
+        if(name.compare(users[i].name)==0) {
+            clientIndex = i;
+            break;
+        }
+    }
+    
+    return clientIndex;
+}
+
+int findUserByFd (int fd) {
+    int i = 0;
+    int clientIndex = -1;
+    for (i=0; i<=MAX_CLIENTS; i++) {
+        if(users[i].fd == 0) {
+            clientIndex = i;
+        }
+    }
+    
+    return clientIndex;
+}
+
+void createUser(int fd, std::string name, std::string password) {
+    int clientIndex = findUserByFd(fd);
+    
+    users[clientIndex].name = name;
+    users[clientIndex].password = password;
+}
+
+int login(int fd, std::string receivedData) {
+    std::string result = "0";
+    std::string delimiter = ";";
+    std::string endChar = "|";
+    size_t pos = 0;
+    std::string token;
+    
+    pos = receivedData.find(delimiter);
+    receivedData.erase(0, pos + delimiter.length());
+    pos = receivedData.find(delimiter);
+    std::string name = receivedData.substr(0, pos);
+    receivedData.erase(0, pos + delimiter.length());
+    pos = receivedData.find(endChar);
+    std::string password = receivedData.substr(0, pos);
+    
+    int clientIndex = findUserByName(name);
+    if(clientIndex == -1) {
+        createUser(fd, name, password);
+        return 1;
+    }
+    std::cout<<name << "--" << users[clientIndex].name << std::endl;
+    std::cout <<password << "--" << users[clientIndex].password << std::endl;
+    if((name.compare(users[clientIndex].name) == 0) &&
+       (password.compare(users[clientIndex].password) == 0)) {
+        return 1;
+    }
+    return 0;
+}
+
 void* cthread(void* arg) {
     struct cln* c = (struct cln*) arg;
     printf("New connection: %s\n", inet_ntoa((struct in_addr)c->caddr.sin_addr));
     Communication *communication = new Communication();
-    
+    std::string text = "";
+    addUser(c);
     while(1) {
         communication->receive(c->cfd);
         std::cout<<communication->getBufRead() <<std::endl;
-        std::string text = "1;0;problem z polaczeniem";
         switch (communication->getTypeOfReceived()) {
             case TYPE_LOGIN:
+            {
+                int result = login(c->cfd, communication->getBufRead());
+                if (result == 1) {
+                    text = "1;1;spoko|";
+                    std::cout<<text<<std::endl;
+                    communication->send(c->cfd, text);
+                    break;
+                }
+                if (result == 0) {
+                    text = "1;0;Wrong password.|";
+                    std::cout<<text<<std::endl;
+                    communication->send(c->cfd, text);
+                    break;
+
+                }
+                text = "1;0;Unexpected error of server.|";
+                std::cout << text << std::endl;
                 communication->send(c->cfd, text);
                 break;
+            }
             case TYPE_GET_CONTACTS:
                 break;
             case TYPE_SEND_MSG:
