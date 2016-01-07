@@ -31,7 +31,7 @@ namespace CommunicatorSocket
 
         public void addMessage(string time, string text)
         {
-            chat.addMessage(time, text);
+            this.chat.addMessage(time, text);
         }
     }
 
@@ -135,6 +135,7 @@ namespace CommunicatorSocket
                 {
                     exist = true;
                     this.users[i].addMessage(time, message);
+                    break;
                 }
                   
             }
@@ -147,9 +148,23 @@ namespace CommunicatorSocket
 
         }
 
-        public void openNewMessageWindow(string nick)
+        public void openMessageWindow(string nick)
         {
-            this.users.Add(new User(nick, this));
+            bool exist = false;
+            for (int i = 0; i < this.users.Count; i++)
+            {
+                if (this.users[i].nick == nick)
+                {
+                    exist = true;
+                    break;
+                }
+
+            }
+
+            if (!exist)
+            {
+                this.users.Add(new User(nick, this));
+            }
         }
 
         private void handleAnswers(string data)

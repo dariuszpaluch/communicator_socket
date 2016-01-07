@@ -52,6 +52,7 @@
             this.ContactsListBox.Name = "ContactsListBox";
             this.ContactsListBox.Size = new System.Drawing.Size(265, 355);
             this.ContactsListBox.TabIndex = 6;
+            this.ContactsListBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ContactsListBox_MouseDoubleClick);
             // 
             // MessageButton
             // 

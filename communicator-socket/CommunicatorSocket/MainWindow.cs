@@ -43,7 +43,12 @@ namespace CommunicatorSocket
 
         private void MessageButton_Click(object sender, EventArgs e)
         {
-            this.serwer.openNewMessageWindow(this.ContactsListBox.SelectedItem.ToString());
+            this.serwer.openMessageWindow(this.ContactsListBox.SelectedItem.ToString());
+        }
+
+        private void ContactsListBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.serwer.openMessageWindow(this.ContactsListBox.SelectedItem.ToString());
         }
     }
 }
