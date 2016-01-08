@@ -36,9 +36,9 @@
             // 
             // MessagesRichTextBox
             // 
-            this.MessagesRichTextBox.Enabled = false;
             this.MessagesRichTextBox.Location = new System.Drawing.Point(12, 12);
             this.MessagesRichTextBox.Name = "MessagesRichTextBox";
+            this.MessagesRichTextBox.ReadOnly = true;
             this.MessagesRichTextBox.Size = new System.Drawing.Size(560, 350);
             this.MessagesRichTextBox.TabIndex = 0;
             this.MessagesRichTextBox.Text = "";
@@ -51,6 +51,7 @@
             this.MessageTextBox.Size = new System.Drawing.Size(425, 54);
             this.MessageTextBox.TabIndex = 1;
             this.MessageTextBox.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.MessageTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MessageTextBox_KeyPress);
             // 
             // SendButton
             // 

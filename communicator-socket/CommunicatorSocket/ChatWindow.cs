@@ -15,22 +15,26 @@ namespace CommunicatorSocket
         private string allMessages;
         private Serwer serwer;
         private string nick;
+        private string loginNick;
         private Form obj;
-        public ChatWindow(string nick, Serwer serwer)
+        public ChatWindow(string nick, string loginNick, Serwer serwer)
         {
             InitializeComponent();
             this.obj = this;
 
-            this.Text = nick;
+            this.Text = "Chat with " + nick;
             this.nick = nick;
             this.allMessages = "";
             this.serwer = serwer;
+            this.loginNick = loginNick;
         }
 
         public void addMessage(string message)
         {
-            allMessages += " " + message + " \n\n";
+            allMessages += this.loginNick + " " + DateTime.Now.ToString("HH:mm:ss") + "\n" + message + " \n\n\n";
             this.MessagesRichTextBox.Text = this.allMessages;
+            this.MessagesRichTextBox.SelectionStart = this.MessagesRichTextBox.TextLength;
+            this.MessagesRichTextBox.ScrollToCaret();
         }
 
         public void addMessage(string time, string text)
@@ -42,8 +46,10 @@ namespace CommunicatorSocket
             }
             else
             {
-                allMessages += " " + text + " \n\n";
+                allMessages += this.nick + " " + time + "\n" + text + " \n\n\n";
                 this.MessagesRichTextBox.Text = this.allMessages;
+                this.MessagesRichTextBox.SelectionStart = this.MessagesRichTextBox.TextLength;
+                this.MessagesRichTextBox.ScrollToCaret();
             }
         }
 
@@ -79,8 +85,20 @@ namespace CommunicatorSocket
 
         private void ChatWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Console.WriteLine("USUWAM");
             this.serwer.removeUser(this.nick);
+        }
+
+        private void MessageTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (Char)Keys.Enter)
+            {
+                string message = this.MessageTextBox.Text;
+                this.MessageTextBox.Text = "";
+                this.serwer.sendMessage(message, this.nick);
+                this.addMessage(message);
+
+                e.Handled = true;
+            }
         }
     }
 }
