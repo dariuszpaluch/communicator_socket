@@ -52,14 +52,22 @@ namespace CommunicatorSocket
         private List<User> users;
         public bool work;
         private string loginNick;
+        private string password;
 
-        public Serwer(string address, string port)
+
+        public Serwer()
         {
-            this.address = address;
-            this.port = port;
             this.users = new List<User>();
             this.work = true;
-            
+        }
+
+        public void showLoginWindow()
+        {
+            var t = Task.Run(() =>
+            {
+                this.login = new Login(this);
+                Application.Run(this.login);
+            });
         }
 
         public void sendMessage(string message, string nick)
@@ -75,10 +83,9 @@ namespace CommunicatorSocket
             this.socketFd.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), this.socketFd);
         }
 
-        public void loginInUser(string login, string password)
+        public void loginInUser()
         {
-            string data = login + ';' + password;
-            this.loginNick = login;
+            string data = this.loginNick + ';' + this.password;
             this.sendData(TYPE_LOGIN, data);
         }
 
@@ -292,10 +299,9 @@ namespace CommunicatorSocket
                 
                 Console.WriteLine("Connected");
 
-                this.login = new Login(this);
-                Application.Run(this.login);
-
-
+                this.loginInUser();
+                //this.login = new Login(this);
+                //Application.Run(this.login);
             }
             catch (Exception exc)
             {
@@ -367,8 +373,12 @@ namespace CommunicatorSocket
             }
         }
 
-        public void connection()
+        public void connection(string nick, string password, string address, string port)
         {
+            this.loginNick = nick;
+            this.password = password;
+            this.address = address;
+            this.port = port;
             Dns.BeginGetHostEntry(this.address, new AsyncCallback(GetHostEntryCallback), null);
 
         }

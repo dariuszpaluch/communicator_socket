@@ -34,11 +34,15 @@
             this.LoginLabel = new System.Windows.Forms.Label();
             this.PasswordLabel = new System.Windows.Forms.Label();
             this.ErrorLabel = new System.Windows.Forms.Label();
+            this.AddressTextBox = new System.Windows.Forms.TextBox();
+            this.PortTextBox = new System.Windows.Forms.TextBox();
+            this.AddressLabel = new System.Windows.Forms.Label();
+            this.PortLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // LoginInButton
             // 
-            this.LoginInButton.Location = new System.Drawing.Point(34, 144);
+            this.LoginInButton.Location = new System.Drawing.Point(34, 212);
             this.LoginInButton.Name = "LoginInButton";
             this.LoginInButton.Size = new System.Drawing.Size(216, 23);
             this.LoginInButton.TabIndex = 0;
@@ -81,7 +85,7 @@
             // ErrorLabel
             // 
             this.ErrorLabel.AutoSize = true;
-            this.ErrorLabel.Location = new System.Drawing.Point(34, 125);
+            this.ErrorLabel.Location = new System.Drawing.Point(31, 185);
             this.ErrorLabel.Name = "ErrorLabel";
             this.ErrorLabel.Size = new System.Drawing.Size(58, 13);
             this.ErrorLabel.TabIndex = 5;
@@ -89,11 +93,47 @@
             this.ErrorLabel.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             this.ErrorLabel.Visible = false;
             // 
+            // AddressTextBox
+            // 
+            this.AddressTextBox.Location = new System.Drawing.Point(34, 144);
+            this.AddressTextBox.Name = "AddressTextBox";
+            this.AddressTextBox.Size = new System.Drawing.Size(131, 20);
+            this.AddressTextBox.TabIndex = 6;
+            // 
+            // PortTextBox
+            // 
+            this.PortTextBox.Location = new System.Drawing.Point(185, 144);
+            this.PortTextBox.Name = "PortTextBox";
+            this.PortTextBox.Size = new System.Drawing.Size(65, 20);
+            this.PortTextBox.TabIndex = 7;
+            // 
+            // AddressLabel
+            // 
+            this.AddressLabel.AutoSize = true;
+            this.AddressLabel.Location = new System.Drawing.Point(31, 128);
+            this.AddressLabel.Name = "AddressLabel";
+            this.AddressLabel.Size = new System.Drawing.Size(45, 13);
+            this.AddressLabel.TabIndex = 8;
+            this.AddressLabel.Text = "Address";
+            // 
+            // PortLabel
+            // 
+            this.PortLabel.AutoSize = true;
+            this.PortLabel.Location = new System.Drawing.Point(182, 128);
+            this.PortLabel.Name = "PortLabel";
+            this.PortLabel.Size = new System.Drawing.Size(26, 13);
+            this.PortLabel.TabIndex = 9;
+            this.PortLabel.Text = "Port";
+            // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 208);
+            this.ClientSize = new System.Drawing.Size(285, 246);
+            this.Controls.Add(this.PortLabel);
+            this.Controls.Add(this.AddressLabel);
+            this.Controls.Add(this.PortTextBox);
+            this.Controls.Add(this.AddressTextBox);
             this.Controls.Add(this.ErrorLabel);
             this.Controls.Add(this.PasswordLabel);
             this.Controls.Add(this.LoginLabel);
@@ -116,5 +156,9 @@
         private System.Windows.Forms.Label LoginLabel;
         private System.Windows.Forms.Label PasswordLabel;
         private System.Windows.Forms.Label ErrorLabel;
+        private System.Windows.Forms.TextBox AddressTextBox;
+        private System.Windows.Forms.TextBox PortTextBox;
+        private System.Windows.Forms.Label AddressLabel;
+        private System.Windows.Forms.Label PortLabel;
     }
 }
