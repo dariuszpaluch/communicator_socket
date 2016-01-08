@@ -56,7 +56,7 @@ void addUser(struct cln* c) {
     user.fd = c->cfd;
     int i = 0;
     for (i=0; i<=MAX_CLIENTS; i++) {
-        if (!users[i].fd) {
+        if (users[i].fd==0 && users[i].name.size()<1) {
             users[i] = user;
             break;
         }
@@ -134,6 +134,12 @@ int login(int fd, std::string receivedData) {
     if((name.compare(users[clientIndex].name) == 0) &&
        (password.compare(users[clientIndex].password) == 0)) {
         users[clientIndex].fd = fd;
+        int i = 0;
+        for(i=0; i <= MAX_CLIENTS; i++) {
+            if(users[i].fd == fd && users[i].name.size() == 0) {
+                users[i].fd = 0;
+            }
+        }
         return 1;
     }
     return 0;
@@ -145,17 +151,17 @@ void* cthread(void* arg) {
     Communication *communication = new Communication();
     std::string text = "";
     addUser(c);
-
-    while(1) {
+    int active = 1;
+    while(active) {
         communication->receive(c->cfd);
-        std::cout<<communication->getBufRead() <<std::endl;
+        std::cout << "received: " << communication->getBufRead() <<std::endl;
         switch (communication->getTypeOfReceived()) {
             case TYPE_LOGIN:
             {
                 int result = login(c->cfd, communication->getBufRead());
                 if (result == 1) {
                     text = "1;1|";
-                    std::cout<<text<<std::endl;
+                    std::cout << "send: " << text << std::endl;
                     communication->send(c->cfd, text);
                     
                     std::stringstream ss;
@@ -163,34 +169,42 @@ void* cthread(void* arg) {
                     std::string contacts = ss.str();
                     int i = 0;
                     for (i=0; i<=MAX_CLIENTS; i++) {
-                        if (!users[i].fd) {
-                            break;
+                        if (users[i].fd!=0) {
+                            std::cout << "send: " << contacts << std::endl;
+                            communication->send(users[i].fd, contacts);
                         }
-                        std::cout << "send: " << contacts << std::endl;
-                        communication->send(users[i].fd, contacts);
                     }
                     break;
                 }
                 if (result == 0) {
                     text = "1;0;Wrong password.|";
-                    std::cout<<text<<std::endl;
+                    std::cout<< "send: " << text <<std::endl;
                     communication->send(c->cfd, text);
                     break;
 
                 }
                 text = "1;0;Unexpected error of server.|";
-                std::cout << text << std::endl;
+                std::cout << "send: " << text << std::endl;
                 communication->send(c->cfd, text);
                 break;
             }
             case TYPE_SEND_MSG:
                 break;
             case TYPE_LOGOUT:
+            {
+                int clientIndex = findUserByFd(c->cfd);
+                users[clientIndex].fd = 0;
+                std::string text = "4;1|";
+                std::cout << "send: " << text << std::endl;
+                communication->send(c->cfd, text);
+                active = 0;
                 break;
+            }
             default:
                 break;
         }
     }
+    close(c->cfd);
     return 0;
 }
 
