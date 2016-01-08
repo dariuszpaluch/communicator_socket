@@ -14,12 +14,16 @@ namespace CommunicatorSocket
         Form obj;
         private Serwer serwer;
         private List<string> allContacts;
-        public MainWindow(Serwer serwer)
+        private string loginNick;
+        public MainWindow(Serwer serwer, string loginNick)
         {
             InitializeComponent();
             this.obj = this;
             this.serwer = serwer;
             this.allContacts = new List<string>();
+            this.loginNick = loginNick;
+            Console.WriteLine(loginNick);
+            this.Text = "Communicator - user " + this.loginNick;
         }
 
         public void setContacts(string data)

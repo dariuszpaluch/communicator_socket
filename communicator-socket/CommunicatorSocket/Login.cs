@@ -30,7 +30,7 @@ namespace CommunicatorSocket
             this.LoginTextBox.Text = "";
             this.PasswordTextBox.Text = "";
 
-            serwer.loginInUser(login, password);
+            serwer.connection(login, password, this.AddressTextBox.Text, this.PortTextBox.Text);
         }
 
         public void setThreadedErrorLabel(String text)

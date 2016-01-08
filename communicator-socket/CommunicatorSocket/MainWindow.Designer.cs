@@ -42,7 +42,7 @@
             this.UsersPanel.Controls.Add(this.UsersLabel);
             this.UsersPanel.Location = new System.Drawing.Point(15, 12);
             this.UsersPanel.Name = "UsersPanel";
-            this.UsersPanel.Size = new System.Drawing.Size(277, 447);
+            this.UsersPanel.Size = new System.Drawing.Size(388, 447);
             this.UsersPanel.TabIndex = 5;
             // 
             // ContactsListBox
@@ -50,7 +50,7 @@
             this.ContactsListBox.FormattingEnabled = true;
             this.ContactsListBox.Location = new System.Drawing.Point(6, 32);
             this.ContactsListBox.Name = "ContactsListBox";
-            this.ContactsListBox.Size = new System.Drawing.Size(265, 355);
+            this.ContactsListBox.Size = new System.Drawing.Size(379, 355);
             this.ContactsListBox.TabIndex = 6;
             this.ContactsListBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ContactsListBox_MouseDoubleClick);
             // 
@@ -58,7 +58,7 @@
             // 
             this.MessageButton.Location = new System.Drawing.Point(3, 405);
             this.MessageButton.Name = "MessageButton";
-            this.MessageButton.Size = new System.Drawing.Size(268, 31);
+            this.MessageButton.Size = new System.Drawing.Size(382, 31);
             this.MessageButton.TabIndex = 5;
             this.MessageButton.Text = "Otwórz okno rozmowy";
             this.MessageButton.UseVisualStyleBackColor = true;
@@ -77,7 +77,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(307, 469);
+            this.ClientSize = new System.Drawing.Size(415, 469);
             this.Controls.Add(this.UsersPanel);
             this.Name = "MainWindow";
             this.Text = "MainWindow";
