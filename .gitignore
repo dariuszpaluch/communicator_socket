@@ -3,3 +3,4 @@ bin
 .*
 !/.gitignore
 communicator_serwer/communicator_serwer.xcodeproj
+communicator_serwer/communicator_serwer/serwer
