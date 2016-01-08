@@ -218,7 +218,7 @@ void sendWMsgs(int fd, std::string receivedData, Communication *communication) {
     pos = receivedData.find(delimiter);
     std::string receiverName = receivedData.substr(0, pos);
     
-    int i = 0;
+    unsigned int i = 0;
     pthread_mutex_lock(&mutex);
     for(i=0; i<w_msgs.size(); i++) {
         if (receiverName.compare(w_msgs[i].receiverName) == 0 ) {
