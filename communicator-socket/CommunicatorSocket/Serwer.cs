@@ -18,11 +18,13 @@ namespace CommunicatorSocket
         public string nick;
         public ChatWindow chat;
         private Serwer serwer;
-        public User(string nick,Serwer serwer)
+        private string loginNick;
+        public User(string nick, string loginNick, Serwer serwer)
         {
             this.nick = nick;
             this.serwer = serwer;
-            this.chat = new ChatWindow(nick, serwer);
+            this.loginNick = loginNick;
+            this.chat = new ChatWindow(nick, this.loginNick, serwer);
             var t = Task.Run(() =>
             {
                 Application.Run(this.chat);
@@ -47,9 +49,9 @@ namespace CommunicatorSocket
         private Socket socketFd;
         private Login login;
         private MainWindow mainWindow;
-        private string userToken;
         private List<User> users;
         public bool work;
+        private string loginNick;
 
         public Serwer(string address, string port)
         {
@@ -57,7 +59,7 @@ namespace CommunicatorSocket
             this.port = port;
             this.users = new List<User>();
             this.work = true;
-            this.mainWindow = new MainWindow(this);
+            
         }
 
         public void sendMessage(string message, string nick)
@@ -76,6 +78,7 @@ namespace CommunicatorSocket
         public void loginInUser(string login, string password)
         {
             string data = login + ';' + password;
+            this.loginNick = login;
             this.sendData(TYPE_LOGIN, data);
         }
 
@@ -90,6 +93,7 @@ namespace CommunicatorSocket
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
+                this.mainWindow = new MainWindow(this, this.loginNick);
                 var t = Task.Run(() =>
                 {
                     Application.Run(this.mainWindow);
@@ -142,7 +146,7 @@ namespace CommunicatorSocket
 
             if (!exist)
             {
-                this.users.Add(new User(nick, this));
+                this.users.Add(new User(nick, this.loginNick, this));
                 this.users[this.users.Count - 1].addMessage(time, message);
             }
 
@@ -163,7 +167,7 @@ namespace CommunicatorSocket
 
             if (!exist)
             {
-                this.users.Add(new User(nick, this));
+                this.users.Add(new User(nick, this.loginNick, this));
             }
         }
 
