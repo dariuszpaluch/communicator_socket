@@ -10,15 +10,19 @@ namespace CommunicatorSocket
 {
     public partial class ChatWindow : Form
     {
+
+        delegate void setThreadedAddMessageCallback(string time, string nick);
         private string allMessages;
         private Serwer serwer;
         private string nick;
+        private Form obj;
         public ChatWindow(string nick, Serwer serwer)
         {
             InitializeComponent();
+            this.obj = this;
+
             this.Text = nick;
             this.nick = nick;
-            serwer.wyswietl();
             this.allMessages = "";
             this.serwer = serwer;
         }
@@ -27,6 +31,20 @@ namespace CommunicatorSocket
         {
             allMessages += " " + message + " \n\n";
             this.MessagesRichTextBox.Text = this.allMessages;
+        }
+
+        public void addMessage(string time, string text)
+        {
+            if (this.MessagesRichTextBox.InvokeRequired)
+            {
+                setThreadedAddMessageCallback statusLabelCallback = new setThreadedAddMessageCallback(this.addMessage);
+                this.obj.Invoke(statusLabelCallback, time, text);
+            }
+            else
+            {
+                allMessages += " " + text + " \n\n";
+                this.MessagesRichTextBox.Text = this.allMessages;
+            }
         }
 
 
@@ -57,6 +75,12 @@ namespace CommunicatorSocket
         private void ChatWindow_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void ChatWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Console.WriteLine("USUWAM");
+            this.serwer.removeUser(this.nick);
         }
     }
 }
