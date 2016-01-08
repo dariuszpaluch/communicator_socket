@@ -27,8 +27,8 @@ namespace CommunicatorSocket
             string login = this.LoginTextBox.Text;
             string password = this.PasswordTextBox.Text;
 
-            //this.LoginTextBox.Text = "";
-            //this.PasswordTextBox.Text = "";
+            this.LoginTextBox.Text = "";
+            this.PasswordTextBox.Text = "";
 
             serwer.loginInUser(login, password);
         }
@@ -58,6 +58,11 @@ namespace CommunicatorSocket
             {
                 this.Close();
             }
+        }
+
+        private void Login_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //this.serwer.logoutCall();
         }
     }
 }

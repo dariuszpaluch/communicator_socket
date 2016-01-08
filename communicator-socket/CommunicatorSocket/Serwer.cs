@@ -8,9 +8,33 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Timers;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CommunicatorSocket
 {
+    public class User
+    {
+        public string nick;
+        public ChatWindow chat;
+        private Serwer serwer;
+        public User(string nick,Serwer serwer)
+        {
+            this.nick = nick;
+            this.serwer = serwer;
+            this.chat = new ChatWindow(nick, serwer);
+            var t = Task.Run(() =>
+            {
+                Application.Run(this.chat);
+            });
+        }
+
+        public void addMessage(string time, string text)
+        {
+            this.chat.addMessage(time, text);
+        }
+    }
+
     public class Serwer
     {
         public const int TYPE_LOGIN = 1;
@@ -24,54 +48,27 @@ namespace CommunicatorSocket
         private Login login;
         private MainWindow mainWindow;
         private string userToken;
+        private List<User> users;
+        public bool work;
 
         public Serwer(string address, string port)
         {
             this.address = address;
             this.port = port;
-        }
-
-        public void wyswietl() {
-            Console.WriteLine("DAREK SUPER MAN");
-        }
-
-
-        private void receiveMessage(string message) {
-
-            Console.WriteLine(message);
-            string[] messageSplit = message.Split(';');
-            string status = messageSplit[0];
-            string name = messageSplit[1];
-            string time = messageSplit[2];
-            string userMessage = messageSplit[3];
-
-            //Console.WriteLine("Done.");
-            ChatWindow chat = new ChatWindow(name, this);
-
-            //////delPassData del = new delPassData(chat.funData);
-            //////chat.Show();
-            ////chat.Show();
-            Application.Run(chat);
-            //chat.addMessage("SUPER MAN");
-
-            ////del("DAREK");
-
-
-            ///* shutdown and close socket */
-            ////socketFd.Shutdown(SocketShutdown.Both);
-            ////socketFd.Close();
+            this.users = new List<User>();
+            this.work = true;
+            this.mainWindow = new MainWindow(this);
         }
 
         public void sendMessage(string message, string nick)
         {
-            //Console.WriteLine("WYSYŁAM WIADOMOSC: " + message);
-            byte[] byteData = Encoding.ASCII.GetBytes("WIADOMOSC OD: " + nick + "Tresc:" + message);
-            //byte[] byteData = Encoding.ASCII.GetBytes("117225");
-            this.socketFd.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), this.socketFd);
+            string data = nick + ';' + message; 
+            this.sendData(TYPE_MESSAGE, data);
         }
 
         private void sendData(int type, string data)
         {
+            Console.WriteLine("SEND: " + type + ";" + data + "|");
             byte[] byteData = Encoding.ASCII.GetBytes(type + ";" + data + "|");
             this.socketFd.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), this.socketFd);
         }
@@ -85,26 +82,24 @@ namespace CommunicatorSocket
         private void handleLoginAnswer(string data)
         {
             string[] messageSplit = data.Split(';');
-            string status = messageSplit[1];
-            string message = messageSplit[2];
+            int status = Int32.Parse(messageSplit[1]);
 
-            Console.WriteLine(status);
-
-            if (Int32.Parse(status) == 1)
+            if (status == 1)
             {
-                this.userToken = message;
                 this.login.setThreadedCloseForm();
-                this.mainWindow = new MainWindow(this);
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(this.mainWindow);
-                this.readMessages();
-                this.readMessages();
+                var t = Task.Run(() =>
+                {
+                    Application.Run(this.mainWindow);
+                });
+
             }
             else
             {
-                this.login.setThreadedErrorLabel(message);
+                if (messageSplit.Length > 2)
+                    this.login.setThreadedErrorLabel(messageSplit[2]);
             }
         }
 
@@ -123,19 +118,92 @@ namespace CommunicatorSocket
 
         private void handleContacts(string data)
         {
-            string[] allContacts = data.Split(';');
+            this.mainWindow.setContacts(data);
+        }
 
-            for (int i = 1; i < allContacts.Length; i++)
+        private void handleMessage(string data)
+        {
+            string[] allData = data.Split(';');
+            string nick = allData[1];
+            string time = allData[2];
+            string message = allData[3];
+
+            bool exist = false;
+            for (int i = 0; i < this.users.Count; i++)
             {
-                this.mainWindow.addContact(allContacts[i]);
+                if (this.users[i].nick == nick)
+                {
+                    exist = true;
+                    this.users[i].addMessage(time, message);
+                    break;
+                }
+                  
             }
+
+            if (!exist)
+            {
+                this.users.Add(new User(nick, this));
+                this.users[this.users.Count - 1].addMessage(time, message);
+            }
+
+        }
+
+        public void openMessageWindow(string nick)
+        {
+            bool exist = false;
+            for (int i = 0; i < this.users.Count; i++)
+            {
+                if (this.users[i].nick == nick)
+                {
+                    exist = true;
+                    break;
+                }
+
+            }
+
+            if (!exist)
+            {
+                this.users.Add(new User(nick, this));
+            }
+        }
+
+        public void removeUser(string nick)
+        {
+            for (int i = 0; i < this.users.Count; i++)
+            {
+                if (this.users[i].nick == nick)
+                {
+                    this.users.RemoveAt(i);
+                    break;
+                }
+
+            }
+        }
+
+        private void handleLogout(string data)
+        {
+            int status = Int32.Parse(data.Split(';')[1]);
+
+            if (status == 1)
+            {
+                this.socketFd.Shutdown(SocketShutdown.Both);
+                this.socketFd.Close();
+                this.work = false;
+            }
+
+        }
+
+        public void logoutCall()
+        {
+            this.sendData(TYPE_LOGOUT, "1");
         }
 
         private void handleAnswers(string data)
         {
+            this.readMessages();
+            Console.WriteLine("RECEIVE MESSAGE: " + data);
             int status = Int32.Parse(data.Split(';')[0]);
-            Console.WriteLine("OTRZYMAŁEM WIADOMOŚ O STATUSIE: " + status);
-            if (status == TYPE_LOGIN) Console.WriteLine("DAREK");
+
             switch (status)
             {
                 case TYPE_LOGIN:
@@ -146,9 +214,17 @@ namespace CommunicatorSocket
                     Console.WriteLine("CONTACTS");
                     this.handleContacts(data);
                     break;
+                case TYPE_MESSAGE:
+                    Console.WriteLine("MESSAGE");
+                    this.handleMessage(data);
+                    break;
+                case TYPE_LOGOUT:
+                    Console.WriteLine("LOGOUT");
+                    this.handleLogout(data);
+                    break;
 
                 default:
-                    Console.WriteLine("NIE ZROZUMIALA WIADOMOSC");
+                    Console.WriteLine("I DON'T KNOW THIS MESSAGE");
                     break;
             }
 
@@ -209,52 +285,12 @@ namespace CommunicatorSocket
 
                 /* complete the connection */
                 this.socketFd.EndConnect(ar);
-
-                /* create the SocketStateObject */
-                SocketStateObject state = new SocketStateObject();
-                state.m_SocketFd = this.socketFd;
-                //SocketStateObject state1 = new SocketStateObject();
-                //state1.m_SocketFd = this.socketFd;
-                //SocketStateObject state2 = new SocketStateObject();
-                //state2.m_SocketFd = this.socketFd;
-                //SocketStateObject state3 = new SocketStateObject();
-                //state3.m_SocketFd = this.socketFd;
                 
-
                 Console.WriteLine("Connected");
 
-                //ChatWindow chat = new ChatWindow("Darek", this);
-
-                ////delPassData del = new delPassData(chat.funData);
-                ////chat.Show();
-                //chat.Show();
-                //System.Timers.Timer odmierzacz = new System.Timers.Timer(); //Tworzenie obiektu
-                //odmierzacz.Interval = 5000; //Ustawienie przerywania na 1000ms (1s)
-                //odmierzacz.Elapsed += new ElapsedEventHandler(this.wykonujMnieCoJakisCzas); //Przypisanie metody
-                //odmierzacz.Start(); //Start timera
-                //this.readMessages();
-                //Application.Run(chat);
                 this.login = new Login(this);
                 Application.Run(this.login);
 
-
-              
-                //Console.ReadKey();
-
-                //chat.addMessage("SUPER MAN");
-
-                /* begin receiving the data */
-                //odczytywanie danych
-
-                //this.socketFd.BeginReceive(state1.m_DataBuf, 0, SocketStateObject.BUF_SIZE, 0, new AsyncCallback(ReceiveCallback), state1);
-                //this.socketFd.BeginReceive(state2.m_DataBuf, 0, SocketStateObject.BUF_SIZE, 0, new AsyncCallback(ReceiveCallback), state2);
-                //while (true)
-                //{
-                //this.socketFd.BeginReceive(state.m_DataBuf, 0, SocketStateObject.BUF_SIZE, 0, new AsyncCallback(ReceiveCallback), state);
-
-                //}
-                //byte[] byteData = Encoding.ASCII.GetBytes("DAREK WYSLANE\0");
-                //this.socketFd.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), this.socketFd);
 
             }
             catch (Exception exc)
@@ -295,8 +331,6 @@ namespace CommunicatorSocket
             }
         }
 
-
-
         private void GetHostEntryCallback(IAsyncResult ar)
         {
             try
@@ -335,5 +369,13 @@ namespace CommunicatorSocket
 
         }
 
+    }
+
+    public class SocketStateObject
+    {
+        public const int BUF_SIZE = 1024;
+        public byte[] m_DataBuf = new byte[BUF_SIZE];
+        public StringBuilder m_StringBuilder = new StringBuilder();
+        public Socket m_SocketFd = null;
     }
 }

@@ -83,6 +83,7 @@
             this.Controls.Add(this.MessagesRichTextBox);
             this.Name = "ChatWindow";
             this.Text = "Okno wiadomości - Darek";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ChatWindow_FormClosing);
             this.Load += new System.EventHandler(this.ChatWindow_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

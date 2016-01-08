@@ -1,7 +1,6 @@
 C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\bin\Debug\CommunicatorSocket.exe.config
 C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\bin\Debug\CommunicatorSocket.exe
 C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.ChatWindow.resources
-C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.Form1.resources
 C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.MainWindow.resources
 C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.MessagesWindows.resources
 C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Debug\CommunicatorSocket.Properties.Resources.resources
