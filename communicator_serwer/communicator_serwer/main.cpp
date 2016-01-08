@@ -145,6 +145,38 @@ int login(int fd, std::string receivedData) {
     return 0;
 }
 
+int sendMessage(int fd, Communication *communication) {
+    std::string receivedData = communication->getBufRead();
+    std::string result = "0";
+    std::string delimiter = ";";
+    std::string endChar = "|";
+    size_t pos = 0;
+    std::string token;
+    
+    pos = receivedData.find(delimiter);
+    receivedData.erase(0, pos + delimiter.length());
+    pos = receivedData.find(delimiter);
+    std::string receiverName = receivedData.substr(0, pos);
+    receivedData.erase(0, pos + delimiter.length());
+    pos = receivedData.find(endChar);
+    std::string message = receivedData.substr(0, pos);
+    std::string time = "25.11.1995 18:00";
+    int senderIndex = findUserByFd(fd);
+    std::string senderName = users[senderIndex].name;
+    
+    int receiverIndex = findUserByName(receiverName);
+    int receiverFd = users[receiverIndex].fd;
+    
+    std::stringstream ss;
+    ss << "3;" << senderName << ";" << time << ";" << message << "|";
+    std::string text = ss.str();
+    
+    std::cout << "send: " << text << std::endl;
+    communication->send(receiverFd, text);
+    
+    return 1;
+}
+
 void* cthread(void* arg) {
     struct cln* c = (struct cln*) arg;
     printf("New connection: %s\n", inet_ntoa((struct in_addr)c->caddr.sin_addr));
@@ -189,7 +221,10 @@ void* cthread(void* arg) {
                 break;
             }
             case TYPE_SEND_MSG:
+            {
+                int result = sendMessage(c->cfd, communication);
                 break;
+            }
             case TYPE_LOGOUT:
             {
                 int clientIndex = findUserByFd(c->cfd);
