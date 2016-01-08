@@ -24,6 +24,7 @@
 #include <sys/wait.h>
 #include <pthread.h>
 #include <vector>
+#include <ctime>
 
 #include "Communication.hpp"
 
@@ -169,7 +170,17 @@ int sendMessage(int fd, Communication *communication) {
     receivedData.erase(0, pos + delimiter.length());
     pos = receivedData.find(endChar);
     std::string message = receivedData.substr(0, pos);
-    std::string time = "25.11.1995 18:00";
+   
+    time_t t = std::time(0);   // get time now
+    struct tm * now = localtime( & t );
+    int Hour   = now->tm_hour;
+    int Min    = now->tm_min;
+    int Sec    = now->tm_sec;
+    
+    std::stringstream ssTime;
+    ssTime << Hour << ":" << Min << ":" << Sec;
+    std::string time = ssTime.str();
+    
     int senderIndex = findUserByFd(fd);
     std::string senderName = users[senderIndex].name;
     
@@ -180,7 +191,7 @@ int sendMessage(int fd, Communication *communication) {
     ss << "3;" << senderName << ";" << time << ";" << message << "|";
     std::string text = ss.str();
     
-    if (receiverIndex != 0) {
+    if (receiverFd != 0) {
         std::cout << "send: " << text << std::endl;
         communication->send(receiverFd, text);
     } else {
@@ -208,15 +219,17 @@ void sendWMsgs(int fd, std::string receivedData, Communication *communication) {
     std::string receiverName = receivedData.substr(0, pos);
     
     int i = 0;
+    pthread_mutex_lock(&mutex);
     for(i=0; i<w_msgs.size(); i++) {
-        pthread_mutex_lock(&mutex);
         if (receiverName.compare(w_msgs[i].receiverName) == 0 ) {
             std::cout << "send: " << w_msgs[i].text << std::endl;
             communication->send(fd, w_msgs[i].text);
-            w_msgs.erase(w_msgs.begin() + i);
         }
-        pthread_mutex_unlock(&mutex);
     }
+    for(i=0; i<w_msgs.size(); i++) {
+                    w_msgs.erase(w_msgs.begin() + i);
+    }
+    pthread_mutex_unlock(&mutex);
 
 }
 
@@ -266,7 +279,7 @@ void* cthread(void* arg) {
             }
             case TYPE_SEND_MSG:
             {
-                int result = sendMessage(c->cfd, communication);
+                sendMessage(c->cfd, communication);
                 break;
             }
             case TYPE_LOGOUT:
