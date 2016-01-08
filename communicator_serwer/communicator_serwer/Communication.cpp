@@ -9,13 +9,13 @@
 #include "Communication.hpp"
 
 Communication::Communication() {
-    bufread.resize(1001);
+    bufread.resize(5001);
 };
 
 void Communication::receive(int fd) {
     bufread.clear();
-    bufread.resize(1001);
-    read(fd, &bufread[0], 1000);
+    bufread.resize(5001);
+    read(fd, &bufread[0], 5000);
     bufread = static_cast<std::string>(bufread);
     typeOfReceived = bufread[0] - '0';
 }

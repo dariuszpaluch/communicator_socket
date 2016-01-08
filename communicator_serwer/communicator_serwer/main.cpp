@@ -23,6 +23,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <pthread.h>
+#include <vector>
 
 #include "Communication.hpp"
 
@@ -46,16 +47,24 @@ struct User {
     int fd;
 };
 
+struct Message {
+    std::string text;
+    std::string receiverName;
+};
+
+std::vector <Message> w_msgs;
+
 struct User users[MAX_CLIENTS];
 
 int clientsCount = 0;
 pthread_t client_threads[MAX_CLIENTS];
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void addUser(struct cln* c) {
     struct User user;
     user.fd = c->cfd;
     int i = 0;
-    for (i=0; i<=MAX_CLIENTS; i++) {
+    for (i=0; i<MAX_CLIENTS; i++) {
         if (users[i].fd==0 && users[i].name.size()<1) {
             users[i] = user;
             break;
@@ -66,7 +75,7 @@ void addUser(struct cln* c) {
 int findUserByName (std::string name) {
     int i = 0;
     int clientIndex = -1;
-    for (i=0; i<=MAX_CLIENTS; i++) {
+    for (i=0; i<MAX_CLIENTS; i++) {
         if(name.compare(users[i].name)==0) {
             clientIndex = i;
             break;
@@ -79,7 +88,7 @@ int findUserByName (std::string name) {
 int findUserByFd (int fd) {
     int i = 0;
     int clientIndex = -1;
-    for (i=0; i<=MAX_CLIENTS; i++) {
+    for (i=0; i<MAX_CLIENTS; i++) {
         if(users[i].fd == fd) {
             clientIndex = i;
             break;
@@ -92,7 +101,7 @@ int findUserByFd (int fd) {
 std::string getContacts () {
     std::stringstream ss;
     int i = 0;
-    for (i=0; i<=MAX_CLIENTS; i++) {
+    for (i=0; i<MAX_CLIENTS; i++) {
         if (users[i].name.size() > 0 ) {
             ss << users[i].name << ";";
         }
@@ -135,7 +144,7 @@ int login(int fd, std::string receivedData) {
        (password.compare(users[clientIndex].password) == 0)) {
         users[clientIndex].fd = fd;
         int i = 0;
-        for(i=0; i <= MAX_CLIENTS; i++) {
+        for(i=0; i < MAX_CLIENTS; i++) {
             if(users[i].fd == fd && users[i].name.size() == 0) {
                 users[i].fd = 0;
             }
@@ -171,10 +180,44 @@ int sendMessage(int fd, Communication *communication) {
     ss << "3;" << senderName << ";" << time << ";" << message << "|";
     std::string text = ss.str();
     
-    std::cout << "send: " << text << std::endl;
-    communication->send(receiverFd, text);
+    if (receiverIndex != 0) {
+        std::cout << "send: " << text << std::endl;
+        communication->send(receiverFd, text);
+    } else {
+        struct Message msg;
+        msg.receiverName = receiverName;
+        msg.text = text;
+        pthread_mutex_lock(&mutex);
+        w_msgs.push_back(msg);
+        pthread_mutex_unlock(&mutex);
+    }
     
     return 1;
+}
+
+void sendWMsgs(int fd, std::string receivedData, Communication *communication) {
+    std::string result = "0";
+    std::string delimiter = ";";
+    std::string endChar = "|";
+    size_t pos = 0;
+    std::string token;
+    
+    pos = receivedData.find(delimiter);
+    receivedData.erase(0, pos + delimiter.length());
+    pos = receivedData.find(delimiter);
+    std::string receiverName = receivedData.substr(0, pos);
+    
+    int i = 0;
+    for(i=0; i<w_msgs.size(); i++) {
+        pthread_mutex_lock(&mutex);
+        if (receiverName.compare(w_msgs[i].receiverName) == 0 ) {
+            std::cout << "send: " << w_msgs[i].text << std::endl;
+            communication->send(fd, w_msgs[i].text);
+            w_msgs.erase(w_msgs.begin() + i);
+        }
+        pthread_mutex_unlock(&mutex);
+    }
+
 }
 
 void* cthread(void* arg) {
@@ -200,12 +243,13 @@ void* cthread(void* arg) {
                     ss << "2;" << getContacts() << "|";
                     std::string contacts = ss.str();
                     int i = 0;
-                    for (i=0; i<=MAX_CLIENTS; i++) {
+                    for (i=0; i<MAX_CLIENTS; i++) {
                         if (users[i].fd!=0) {
                             std::cout << "send: " << contacts << std::endl;
                             communication->send(users[i].fd, contacts);
                         }
                     }
+                    sendWMsgs(c->cfd, communication->getBufRead(), communication);
                     break;
                 }
                 if (result == 0) {
