@@ -171,14 +171,28 @@ int sendMessage(int fd, Communication *communication) {
     pos = receivedData.find(endChar);
     std::string message = receivedData.substr(0, pos);
    
+    std::stringstream ssTime;
     time_t t = std::time(0);   // get time now
     struct tm * now = localtime( & t );
-    int Hour   = now->tm_hour;
-    int Min    = now->tm_min;
-    int Sec    = now->tm_sec;
+    int Hour = now->tm_hour;
+    if (Hour < 10 ) {
+        ssTime << "0" << Hour << ":";
+    } else {
+        ssTime << Hour << ":";
+    }
+    int Min = now->tm_min;
+    if (Min < 10 ) {
+        ssTime << "0" << Min << ":";
+    } else {
+        ssTime << Min << ":";
+    }
+    int Sec = now->tm_sec;
+    if (Sec < 10 ) {
+        ssTime << "0" << Sec;
+    } else {
+        ssTime << Sec;
+    }
     
-    std::stringstream ssTime;
-    ssTime << Hour << ":" << Min << ":" << Sec;
     std::string time = ssTime.str();
     
     int senderIndex = findUserByFd(fd);
