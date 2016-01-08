@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
 #include <arpa/inet.h>
 #include <sys/select.h>
 #include <unistd.h>
@@ -53,10 +54,9 @@ pthread_t client_threads[MAX_CLIENTS];
 void addUser(struct cln* c) {
     struct User user;
     user.fd = c->cfd;
-    
     int i = 0;
     for (i=0; i<=MAX_CLIENTS; i++) {
-        if (!users[i].fd) {
+        if (users[i].fd==0 && users[i].name.size()<1) {
             users[i] = user;
             break;
         }
@@ -80,17 +80,31 @@ int findUserByFd (int fd) {
     int i = 0;
     int clientIndex = -1;
     for (i=0; i<=MAX_CLIENTS; i++) {
-        if(users[i].fd == 0) {
+        if(users[i].fd == fd) {
             clientIndex = i;
+            break;
         }
     }
-    
+
     return clientIndex;
+}
+
+std::string getContacts () {
+    std::stringstream ss;
+    int i = 0;
+    for (i=0; i<=MAX_CLIENTS; i++) {
+        if (users[i].name.size() > 0 ) {
+            ss << users[i].name << ";";
+        }
+    }
+    std::string s = ss.str();
+    std::string st = s.substr(0, s.size()-1);
+    
+    return st;
 }
 
 void createUser(int fd, std::string name, std::string password) {
     int clientIndex = findUserByFd(fd);
-    
     users[clientIndex].name = name;
     users[clientIndex].password = password;
 }
@@ -119,6 +133,13 @@ int login(int fd, std::string receivedData) {
     std::cout <<password << "--" << users[clientIndex].password << std::endl;
     if((name.compare(users[clientIndex].name) == 0) &&
        (password.compare(users[clientIndex].password) == 0)) {
+        users[clientIndex].fd = fd;
+        int i = 0;
+        for(i=0; i <= MAX_CLIENTS; i++) {
+            if(users[i].fd == fd && users[i].name.size() == 0) {
+                users[i].fd = 0;
+            }
+        }
         return 1;
     }
     return 0;
@@ -130,41 +151,60 @@ void* cthread(void* arg) {
     Communication *communication = new Communication();
     std::string text = "";
     addUser(c);
-    while(1) {
+    int active = 1;
+    while(active) {
         communication->receive(c->cfd);
-        std::cout<<communication->getBufRead() <<std::endl;
+        std::cout << "received: " << communication->getBufRead() <<std::endl;
         switch (communication->getTypeOfReceived()) {
             case TYPE_LOGIN:
             {
                 int result = login(c->cfd, communication->getBufRead());
                 if (result == 1) {
-                    text = "1;1;spoko|";
-                    std::cout<<text<<std::endl;
+                    text = "1;1|";
+                    std::cout << "send: " << text << std::endl;
                     communication->send(c->cfd, text);
+                    
+                    std::stringstream ss;
+                    ss << "2;" << getContacts() << "|";
+                    std::string contacts = ss.str();
+                    int i = 0;
+                    for (i=0; i<=MAX_CLIENTS; i++) {
+                        if (users[i].fd!=0) {
+                            std::cout << "send: " << contacts << std::endl;
+                            communication->send(users[i].fd, contacts);
+                        }
+                    }
                     break;
                 }
                 if (result == 0) {
                     text = "1;0;Wrong password.|";
-                    std::cout<<text<<std::endl;
+                    std::cout<< "send: " << text <<std::endl;
                     communication->send(c->cfd, text);
                     break;
 
                 }
                 text = "1;0;Unexpected error of server.|";
-                std::cout << text << std::endl;
+                std::cout << "send: " << text << std::endl;
                 communication->send(c->cfd, text);
                 break;
             }
-            case TYPE_GET_CONTACTS:
-                break;
             case TYPE_SEND_MSG:
                 break;
             case TYPE_LOGOUT:
+            {
+                int clientIndex = findUserByFd(c->cfd);
+                users[clientIndex].fd = 0;
+                std::string text = "4;1|";
+                std::cout << "send: " << text << std::endl;
+                communication->send(c->cfd, text);
+                active = 0;
                 break;
+            }
             default:
                 break;
         }
     }
+    close(c->cfd);
     return 0;
 }
 
