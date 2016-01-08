@@ -57,11 +57,12 @@ namespace CommunicatorSocket
             this.port = port;
             this.users = new List<User>();
             this.work = true;
+            this.mainWindow = new MainWindow(this);
         }
 
         public void sendMessage(string message, string nick)
         {
-            string data = nick + ';' + "07.01.2016" + ';' + message; 
+            string data = nick + ';' + message; 
             this.sendData(TYPE_MESSAGE, data);
         }
 
@@ -81,12 +82,11 @@ namespace CommunicatorSocket
         private void handleLoginAnswer(string data)
         {
             string[] messageSplit = data.Split(';');
-            string status = messageSplit[1];
+            int status = Int32.Parse(messageSplit[1]);
 
-            if (Int32.Parse(status) == 1)
+            if (status == 1)
             {
                 this.login.setThreadedCloseForm();
-                this.mainWindow = new MainWindow(this);
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
@@ -119,7 +119,6 @@ namespace CommunicatorSocket
         private void handleContacts(string data)
         {
             this.mainWindow.setContacts(data);
-
         }
 
         private void handleMessage(string data)
@@ -370,5 +369,13 @@ namespace CommunicatorSocket
 
         }
 
+    }
+
+    public class SocketStateObject
+    {
+        public const int BUF_SIZE = 1024;
+        public byte[] m_DataBuf = new byte[BUF_SIZE];
+        public StringBuilder m_StringBuilder = new StringBuilder();
+        public Socket m_SocketFd = null;
     }
 }
