@@ -85,12 +85,14 @@ namespace CommunicatorSocket
         public bool work;
         private string loginNick;
         private string password;
+        private bool connecting;
 
 
         public Serwer()
         {
             this.users = new List<User>();
             this.work = true;
+            this.connecting = false;
         }
 
         public void showLoginWindow()
@@ -116,10 +118,17 @@ namespace CommunicatorSocket
             this.socketFd.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), this.socketFd);
         }
 
-        public void loginInUser()
+        public void loginInUser(string loginNick, string password)
         {
-            string data = this.loginNick + ';' + this.password;
+            this.loginNick = loginNick;
+            this.password = password;
+            string data = loginNick + ';' + password;
             this.sendData(TYPE_LOGIN, data);
+        }
+
+        public bool getConnecting()
+        {
+            return this.connecting;
         }
 
         private void handleLoginAnswer(string data)
@@ -129,6 +138,7 @@ namespace CommunicatorSocket
 
             if (status == 1)
             {
+                this.login.setLoginInStatus(true);
                 this.login.setThreadedCloseForm();
 
                 Application.EnableVisualStyles();
@@ -234,9 +244,9 @@ namespace CommunicatorSocket
 
             if (status == 1)
             {
-                this.socketFd.Shutdown(SocketShutdown.Both);
-                this.socketFd.Close();
+               
                 this.work = false;
+                this.logoutCall();
             }
 
         }
@@ -335,8 +345,9 @@ namespace CommunicatorSocket
                 this.socketFd.EndConnect(ar);
                 
                 Console.WriteLine("Connected");
+                this.connecting = true;
 
-                this.loginInUser();
+                this.loginInUser(this.loginNick, this.password);
                 //this.login = new Login(this);
                 //Application.Run(this.login);
             }
@@ -418,6 +429,15 @@ namespace CommunicatorSocket
             this.port = port;
             Dns.BeginGetHostEntry(this.address, new AsyncCallback(GetHostEntryCallback), null);
 
+        }
+
+        public void closeConnection()
+        {
+            if (this.connecting)
+            {
+                this.socketFd.Shutdown(SocketShutdown.Both);
+                this.socketFd.Close();
+            }
         }
 
     }
