@@ -19,12 +19,16 @@ namespace CommunicatorSocket
         public ChatWindow chat;
         private Serwer serwer;
         private string loginNick;
+        private String allMessages;
+        private bool showChat;
         public User(string nick, string loginNick, Serwer serwer)
         {
             this.nick = nick;
             this.serwer = serwer;
             this.loginNick = loginNick;
-            this.chat = new ChatWindow(nick, this.loginNick, serwer);
+            
+            this.chat = new ChatWindow(this.nick, this.loginNick, this.serwer, this.allMessages, this);
+            this.showChat = true;
             var t = Task.Run(() =>
             {
                 Application.Run(this.chat);
@@ -34,6 +38,34 @@ namespace CommunicatorSocket
         public void addMessage(string time, string text)
         {
             this.chat.addMessage(time, text);
+        }
+
+        public void hide()
+        {
+            if (this.showChat)
+            {
+                this.showChat = false;
+                this.chat.Dispose();
+            }
+
+        }
+
+        public void show()
+        {
+            if (!this.showChat)
+            {
+                this.chat = new ChatWindow(this.nick, this.loginNick, this.serwer, this.allMessages, this);
+                var t = Task.Run(() =>
+                {
+                    Application.Run(this.chat);
+                });
+                t.Wait();
+            }
+        }
+
+        public void saveMessages(string allMessages)
+        {
+            this.allMessages = allMessages;
         }
     }
 
@@ -68,6 +100,7 @@ namespace CommunicatorSocket
                 this.login = new Login(this);
                 Application.Run(this.login);
             });
+            t.Wait();
         }
 
         public void sendMessage(string message, string nick)
@@ -105,6 +138,7 @@ namespace CommunicatorSocket
                 {
                     Application.Run(this.mainWindow);
                 });
+                t.Wait();
 
             }
             else
@@ -126,6 +160,8 @@ namespace CommunicatorSocket
                 }
             }
         }
+
+
 
         private void handleContacts(string data)
         {
@@ -167,6 +203,7 @@ namespace CommunicatorSocket
                 if (this.users[i].nick == nick)
                 {
                     exist = true;
+                    this.users[i].show();
                     break;
                 }
 
@@ -184,7 +221,7 @@ namespace CommunicatorSocket
             {
                 if (this.users[i].nick == nick)
                 {
-                    this.users.RemoveAt(i);
+                    this.users[i].hide();
                     break;
                 }
 

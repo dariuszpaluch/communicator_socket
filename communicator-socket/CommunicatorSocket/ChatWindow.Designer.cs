@@ -42,6 +42,9 @@
             this.MessagesRichTextBox.Size = new System.Drawing.Size(560, 350);
             this.MessagesRichTextBox.TabIndex = 0;
             this.MessagesRichTextBox.Text = "";
+            this.MessagesRichTextBox.Click += new System.EventHandler(this.MessagesRichTextBox_Click);
+            this.MessagesRichTextBox.EnabledChanged += new System.EventHandler(this.MessagesRichTextBox_EnabledChanged);
+            this.MessagesRichTextBox.TextChanged += new System.EventHandler(this.MessagesRichTextBox_TextChanged);
             // 
             // MessageTextBox
             // 
@@ -50,7 +53,6 @@
             this.MessageTextBox.Name = "MessageTextBox";
             this.MessageTextBox.Size = new System.Drawing.Size(425, 54);
             this.MessageTextBox.TabIndex = 1;
-            this.MessageTextBox.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.MessageTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MessageTextBox_KeyPress);
             // 
             // SendButton
@@ -71,7 +73,6 @@
             this.MessageLabel.Size = new System.Drawing.Size(92, 13);
             this.MessageLabel.TabIndex = 3;
             this.MessageLabel.Text = "Treść wiadomości";
-            this.MessageLabel.Click += new System.EventHandler(this.label1_Click);
             // 
             // ChatWindow
             // 
@@ -83,9 +84,12 @@
             this.Controls.Add(this.MessageTextBox);
             this.Controls.Add(this.MessagesRichTextBox);
             this.Name = "ChatWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Okno wiadomości - Darek";
+            this.Activated += new System.EventHandler(this.ChatWindow_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ChatWindow_FormClosing);
-            this.Load += new System.EventHandler(this.ChatWindow_Load);
+            this.Shown += new System.EventHandler(this.ChatWindow_Shown);
+            this.Enter += new System.EventHandler(this.ChatWindow_Enter);
             this.ResumeLayout(false);
             this.PerformLayout();
 

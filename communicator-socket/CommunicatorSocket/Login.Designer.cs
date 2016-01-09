@@ -99,6 +99,7 @@
             this.AddressTextBox.Name = "AddressTextBox";
             this.AddressTextBox.Size = new System.Drawing.Size(131, 20);
             this.AddressTextBox.TabIndex = 6;
+            this.AddressTextBox.Text = "vps.tomys.pl";
             // 
             // PortTextBox
             // 
@@ -106,6 +107,7 @@
             this.PortTextBox.Name = "PortTextBox";
             this.PortTextBox.Size = new System.Drawing.Size(65, 20);
             this.PortTextBox.TabIndex = 7;
+            this.PortTextBox.Text = "1234";
             // 
             // AddressLabel
             // 
