@@ -1,0 +1,48 @@
+Temat 7: Komunikator internetowy typu GG
+
+Naszym zadaniem by³o stworzenie aplikacji sieciowej opartej na gniazdach BSD. Serwer zaimplementowaliœmy w jêzyku C++ z obs³ug¹ gniazd w systemie Linux oraz Mac OS X, natomiast aplikacjê stworzyliœmy dla systemu Windows w jêzyku C# (Visual Studio 2013).
+
+Pliki Ÿród³owe:
+a)	Serwer
+main.cpp – zawieraj¹cy g³ówne funkcje programu (obs³uga w¹tków, obs³uga komunikatów od klienta (poza komunikacj¹ na socketach)
+Communication.cpp, Communication.hpp – klasa Communication odpowiedzialna za odbieranie i wysy³anie danych przez socket.
+b)	Klient
+Program.cs – klasa z funkcj¹ main(), tworzymy serwer i wyœwietlamy okno logowania
+Serwer.cs – g³ówna klasa odpowiedzialna za po³¹czenie z serwerem, komunikacj¹ z serwerem i wyœwietlanie okien zale¿nych od komunikatów otrzymanych z serwerem (g³ówna klasa aplikacji)
+User.cs – klasa z informacjami o u¿ytkowniku (wiadomoœci, kontakty, otwarte okna rozmów z u¿ytkownikami)
+MainWindows.cs – okno z list¹ kontaktów
+ChatWindow.cs – okno rozmowy z u¿ytkownikiem
+LoginWindows.cs – okno logowania oraz wybór adresu i portu serwer
+ 
+Protokó³ komunikacyjny:
+ 
+a)	Klient -> Serwer:
+Login:
+1;login;has³o|
+Wyœlij wiadomoœæ:
+3;adresat;wiadomoœæ|
+Wylogowanie:
+4;1|
+
+b)	Serwer -> Klient
+Logowanie prawid³owe (nowy u¿ytkownik lub prawid³owy login i has³o):
+1;1|
+Has³o nieprawid³owe:
+1;0;Wrong password.|
+Pozosta³e nieprzewidziane problemy z logowaniem:
+1;0;Unexpected error of server.|
+Wys³anie listy u¿ytkowników:
+2;name1;name2;name3|
+Wys³anie wiadomoœci:
+3;name_nadawca;czas;wiadomoœæ|
+Poprawne wylogowanie:
+4;1| 
+
+Obs³uga projektu:
+a)	Serwer
+Stworzony zosta³ Makefile. W folderze serwera (communicator_serwer/communicator_serwer) nale¿y uruchomiæ polecenie make, aby skompilowaæ projekt. A nastêpnie w³¹czyæ serwer poleceniem ./serwer.
+b)	Klient
+Wymagany program Visual Studio w wersji minimum 2013. Zbuildowanie i uruchomienie projektu nie wymaga wiêkszego wyjaœnienia (standardowy build & run). Plik wykonywalny .exe projektu w standardowej lokalizacji (communicator-socket/CommunicatorSocket/obj/Debug lub communicator-socket/CommunicatorSocket/obj/Release).
+
+Dariusz Paluch,
+Tomasz Tomys
