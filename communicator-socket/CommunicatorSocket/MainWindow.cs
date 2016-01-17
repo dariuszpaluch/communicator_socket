@@ -5,6 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CommunicatorSocket
 {
@@ -15,7 +17,8 @@ namespace CommunicatorSocket
         private Serwer serwer;
         private List<string> allContacts;
         private string loginNick;
-        public MainWindow(Serwer serwer, string loginNick)
+        private CancellationTokenSource tokenSource;
+        public MainWindow(Serwer serwer, string loginNick, CancellationTokenSource tokenSource)
         {
             InitializeComponent();
             this.obj = this;
@@ -24,6 +27,7 @@ namespace CommunicatorSocket
             this.loginNick = loginNick;
             Console.WriteLine(loginNick);
             this.Text = "Communicator - user " + this.loginNick;
+            this.tokenSource = tokenSource;
         }
 
         public void setContacts(string data)
@@ -58,6 +62,7 @@ namespace CommunicatorSocket
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             this.serwer.logoutCall();
+            this.tokenSource.Dispose();
         }
 
     }

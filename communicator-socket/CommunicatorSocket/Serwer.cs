@@ -13,30 +13,6 @@ using System.Threading.Tasks;
 
 namespace CommunicatorSocket
 {
-    public class User
-    {
-        public string nick;
-        public ChatWindow chat;
-        private Serwer serwer;
-        private string loginNick;
-        public User(string nick, string loginNick, Serwer serwer)
-        {
-            this.nick = nick;
-            this.serwer = serwer;
-            this.loginNick = loginNick;
-            this.chat = new ChatWindow(nick, this.loginNick, serwer);
-            var t = Task.Run(() =>
-            {
-                Application.Run(this.chat);
-            });
-        }
-
-        public void addMessage(string time, string text)
-        {
-            this.chat.addMessage(time, text);
-        }
-    }
-
     public class Serwer
     {
         public const int TYPE_LOGIN = 1;
@@ -48,26 +24,33 @@ namespace CommunicatorSocket
         private string port;
         private Socket socketFd;
         private Login login;
+        private CancellationTokenSource mainWindowTokenSource;
+        private CancellationTokenSource loginWindowTokenSource;
         private MainWindow mainWindow;
         private List<User> users;
         public bool work;
         private string loginNick;
         private string password;
-
+        private bool connecting;
 
         public Serwer()
         {
             this.users = new List<User>();
             this.work = true;
+            this.connecting = false;
+            this.mainWindowTokenSource = new CancellationTokenSource();
+            this.loginWindowTokenSource = new CancellationTokenSource();
         }
 
         public void showLoginWindow()
         {
+            var token = this.loginWindowTokenSource.Token;
             var t = Task.Run(() =>
             {
-                this.login = new Login(this);
+                this.login = new Login(this, this.loginWindowTokenSource);
                 Application.Run(this.login);
-            });
+            }, token);
+            t.Wait();
         }
 
         public void sendMessage(string message, string nick)
@@ -83,10 +66,17 @@ namespace CommunicatorSocket
             this.socketFd.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), this.socketFd);
         }
 
-        public void loginInUser()
+        public void loginInUser(string loginNick, string password)
         {
-            string data = this.loginNick + ';' + this.password;
+            this.loginNick = loginNick;
+            this.password = password;
+            string data = loginNick + ';' + password;
             this.sendData(TYPE_LOGIN, data);
+        }
+
+        public bool getConnecting()
+        {
+            return this.connecting;
         }
 
         private void handleLoginAnswer(string data)
@@ -96,15 +86,18 @@ namespace CommunicatorSocket
 
             if (status == 1)
             {
+                this.login.setLoginInStatus(true);
                 this.login.setThreadedCloseForm();
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                this.mainWindow = new MainWindow(this, this.loginNick);
+                var token = this.mainWindowTokenSource.Token;
+                this.mainWindow = new MainWindow(this, this.loginNick, this.mainWindowTokenSource);
                 var t = Task.Run(() =>
                 {
                     Application.Run(this.mainWindow);
-                });
+                }, token);
+                t.Wait();
 
             }
             else
@@ -126,6 +119,8 @@ namespace CommunicatorSocket
                 }
             }
         }
+
+
 
         private void handleContacts(string data)
         {
@@ -167,6 +162,7 @@ namespace CommunicatorSocket
                 if (this.users[i].nick == nick)
                 {
                     exist = true;
+                    this.users[i].show();
                     break;
                 }
 
@@ -184,7 +180,7 @@ namespace CommunicatorSocket
             {
                 if (this.users[i].nick == nick)
                 {
-                    this.users.RemoveAt(i);
+                    this.users[i].hide();
                     break;
                 }
 
@@ -197,9 +193,9 @@ namespace CommunicatorSocket
 
             if (status == 1)
             {
-                this.socketFd.Shutdown(SocketShutdown.Both);
-                this.socketFd.Close();
+               
                 this.work = false;
+                this.logoutCall();
             }
 
         }
@@ -298,8 +294,9 @@ namespace CommunicatorSocket
                 this.socketFd.EndConnect(ar);
                 
                 Console.WriteLine("Connected");
+                this.connecting = true;
 
-                this.loginInUser();
+                this.loginInUser(this.loginNick, this.password);
                 //this.login = new Login(this);
                 //Application.Run(this.login);
             }
@@ -381,6 +378,15 @@ namespace CommunicatorSocket
             this.port = port;
             Dns.BeginGetHostEntry(this.address, new AsyncCallback(GetHostEntryCallback), null);
 
+        }
+
+        public void closeConnection()
+        {
+            if (this.connecting)
+            {
+                this.socketFd.Shutdown(SocketShutdown.Both);
+                this.socketFd.Close();
+            }
         }
 
     }

@@ -5,6 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CommunicatorSocket
 {
@@ -12,14 +14,18 @@ namespace CommunicatorSocket
     {
         private Form obj;
         private Serwer serwer;
+        private CancellationTokenSource tokenSource;
         delegate void setThreadedStatusLabelCallback(String text);
         delegate void setThreadedClose();
+        bool loginInStatus;
 
-        public Login(Serwer serwer)
+        public Login(Serwer serwer, CancellationTokenSource tokenSource)
         {
             InitializeComponent();
             this.serwer = serwer;
             this.obj = this;
+            this.loginInStatus = false;
+            this.tokenSource = tokenSource;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -27,10 +33,24 @@ namespace CommunicatorSocket
             string login = this.LoginTextBox.Text;
             string password = this.PasswordTextBox.Text;
 
-            this.LoginTextBox.Text = "";
-            this.PasswordTextBox.Text = "";
+            this.changeEnabledAllItems(false);
+            if (!serwer.getConnecting())
+            {
+                serwer.connection(login, password, this.AddressTextBox.Text, this.PortTextBox.Text);
+            }
+            else
+            {
+                serwer.loginInUser(login, password);
+            }
+        }
 
-            serwer.connection(login, password, this.AddressTextBox.Text, this.PortTextBox.Text);
+        private void changeEnabledAllItems(bool status)
+        {
+            this.LoginTextBox.Enabled = status;
+            this.PasswordTextBox.Enabled = status;
+            this.AddressTextBox.Enabled = status;
+            this.PortTextBox.Enabled = status;
+            this.LoginInButton.Enabled = status;
         }
 
         public void setThreadedErrorLabel(String text)
@@ -44,6 +64,7 @@ namespace CommunicatorSocket
             {
                 this.ErrorLabel.Text = text;
                 this.ErrorLabel.Visible = true;
+                this.changeEnabledAllItems(true);
             }
         }
 
@@ -62,7 +83,15 @@ namespace CommunicatorSocket
 
         private void Login_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //this.serwer.logoutCall();
+            if (!this.loginInStatus)
+                this.serwer.closeConnection();
+
+            this.tokenSource.Dispose();
+        }
+
+        public void setLoginInStatus(bool status)
+        {
+            this.loginInStatus = status;
         }
     }
 }

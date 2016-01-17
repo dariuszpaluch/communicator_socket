@@ -61,6 +61,7 @@
             // 
             this.PasswordTextBox.Location = new System.Drawing.Point(34, 93);
             this.PasswordTextBox.Name = "PasswordTextBox";
+            this.PasswordTextBox.PasswordChar = '*';
             this.PasswordTextBox.Size = new System.Drawing.Size(216, 20);
             this.PasswordTextBox.TabIndex = 2;
             // 
@@ -99,6 +100,7 @@
             this.AddressTextBox.Name = "AddressTextBox";
             this.AddressTextBox.Size = new System.Drawing.Size(131, 20);
             this.AddressTextBox.TabIndex = 6;
+            this.AddressTextBox.Text = "vps.tomys.pl";
             // 
             // PortTextBox
             // 
@@ -106,6 +108,7 @@
             this.PortTextBox.Name = "PortTextBox";
             this.PortTextBox.Size = new System.Drawing.Size(65, 20);
             this.PortTextBox.TabIndex = 7;
+            this.PortTextBox.Text = "1234";
             // 
             // AddressLabel
             // 
