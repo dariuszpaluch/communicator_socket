@@ -1,48 +1,48 @@
-Temat 7: Komunikator internetowy typu GG
+ÔªøTemat 7: Komunikator internetowy typu GG
 
-Naszym zadaniem by≥o stworzenie aplikacji sieciowej opartej na gniazdach BSD. Serwer zaimplementowaliúmy w jÍzyku C++ z obs≥ugπ gniazd w systemie Linux oraz Mac OS X, natomiast aplikacjÍ stworzyliúmy dla systemu Windows w jÍzyku C# (Visual Studio 2013).
+Naszym zadaniem by≈Ço stworzenie aplikacji sieciowej opartej na gniazdach BSD. Serwer zaimplementowali≈õmy w jƒôzyku C++ z obs≈ÇugƒÖ gniazd w systemie Linux oraz Mac OS X, natomiast aplikacjƒô stworzyli≈õmy dla systemu Windows w jƒôzyku C# (Visual Studio 2013).
 
-Pliki ürÛd≥owe:
+Pliki ≈∫r√≥d≈Çowe:
 a)	Serwer
-main.cpp ñ zawierajπcy g≥Ûwne funkcje programu (obs≥uga wπtkÛw, obs≥uga komunikatÛw od klienta (poza komunikacjπ na socketach)
-Communication.cpp, Communication.hpp ñ klasa Communication odpowiedzialna za odbieranie i wysy≥anie danych przez socket.
+main.cpp ‚Äì zawierajƒÖcy g≈Ç√≥wne funkcje programu (obs≈Çuga wƒÖtk√≥w, obs≈Çuga komunikat√≥w od klienta (poza komunikacjƒÖ na socketach)
+Communication.cpp, Communication.hpp ‚Äì klasa Communication odpowiedzialna za odbieranie i wysy≈Çanie danych przez socket.
 b)	Klient
-Program.cs ñ klasa z funkcjπ main(), tworzymy serwer i wyúwietlamy okno logowania
-Serwer.cs ñ g≥Ûwna klasa odpowiedzialna za po≥πczenie z serwerem, komunikacjπ z serwerem i wyúwietlanie okien zaleønych od komunikatÛw otrzymanych z serwerem (g≥Ûwna klasa aplikacji)
-User.cs ñ klasa z informacjami o uøytkowniku (wiadomoúci, kontakty, otwarte okna rozmÛw z uøytkownikami)
-MainWindows.cs ñ okno z listπ kontaktÛw
-ChatWindow.cs ñ okno rozmowy z uøytkownikiem
-LoginWindows.cs ñ okno logowania oraz wybÛr adresu i portu serwer
- 
-ProtokÛ≥ komunikacyjny:
+Program.cs ‚Äì klasa z funkcjƒÖ main(), tworzymy serwer i wy≈õwietlamy okno logowania
+Serwer.cs ‚Äì g≈Ç√≥wna klasa odpowiedzialna za po≈ÇƒÖczenie z serwerem, komunikacjƒÖ z serwerem i wy≈õwietlanie okien zale≈ºnych od komunikat√≥w otrzymanych z serwerem (g≈Ç√≥wna klasa aplikacji)
+User.cs ‚Äì klasa z informacjami o u≈ºytkowniku (wiadomo≈õci, kontakty, otwarte okna rozm√≥w z u≈ºytkownikami)
+MainWindows.cs ‚Äì okno z listƒÖ kontakt√≥w
+ChatWindow.cs ‚Äì okno rozmowy z u≈ºytkownikiem
+LoginWindows.cs ‚Äì okno logowania oraz wyb√≥r adresu i portu serwer
+
+Protok√≥≈Ç komunikacyjny:
  
 a)	Klient -> Serwer:
 Login:
-1;login;has≥o|
-Wyúlij wiadomoúÊ:
-3;adresat;wiadomoúÊ|
+1;login;has≈Ço|
+Wy≈õlij wiadomo≈õƒá:
+3;adresat;wiadomo≈õƒá|
 Wylogowanie:
 4;1|
 
 b)	Serwer -> Klient
-Logowanie prawid≥owe (nowy uøytkownik lub prawid≥owy login i has≥o):
+Logowanie prawid≈Çowe (nowy u≈ºytkownik lub prawid≈Çowy login i has≈Ço):
 1;1|
-Has≥o nieprawid≥owe:
+Has≈Ço nieprawid≈Çowe:
 1;0;Wrong password.|
-Pozosta≥e nieprzewidziane problemy z logowaniem:
+Pozosta≈Çe nieprzewidziane problemy z logowaniem:
 1;0;Unexpected error of server.|
-Wys≥anie listy uøytkownikÛw:
+Wys≈Çanie listy u≈ºytkownik√≥w:
 2;name1;name2;name3|
-Wys≥anie wiadomoúci:
-3;name_nadawca;czas;wiadomoúÊ|
+Wys≈Çanie wiadomo≈õci:
+3;name_nadawca;czas;wiadomo≈õƒá|
 Poprawne wylogowanie:
 4;1| 
 
-Obs≥uga projektu:
+Obs≈Çuga projektu:
 a)	Serwer
-Stworzony zosta≥ Makefile. W folderze serwera (communicator_serwer/communicator_serwer) naleøy uruchomiÊ polecenie make, aby skompilowaÊ projekt. A nastÍpnie w≥πczyÊ serwer poleceniem ./serwer.
+Stworzony zosta≈Ç Makefile. W folderze serwera (communicator_serwer/communicator_serwer) nale≈ºy uruchomiƒá polecenie make, aby skompilowaƒá projekt. A nastƒôpnie w≈ÇƒÖczyƒá serwer poleceniem ./serwer.
 b)	Klient
-Wymagany program Visual Studio w wersji minimum 2013. Zbuildowanie i uruchomienie projektu nie wymaga wiÍkszego wyjaúnienia (standardowy build & run). Plik wykonywalny .exe projektu w standardowej lokalizacji (communicator-socket/CommunicatorSocket/obj/Debug lub communicator-socket/CommunicatorSocket/obj/Release).
+Wymagany program Visual Studio w wersji minimum 2013. Zbuildowanie i uruchomienie projektu nie wymaga wiƒôkszego wyja≈õnienia (standardowy build & run). Plik wykonywalny .exe projektu w standardowej lokalizacji (communicator-socket/CommunicatorSocket/obj/Debug lub communicator-socket/CommunicatorSocket/obj/Release).
 
 Dariusz Paluch,
 Tomasz Tomys
