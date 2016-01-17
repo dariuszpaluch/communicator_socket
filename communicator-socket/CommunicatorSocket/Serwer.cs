@@ -13,62 +13,6 @@ using System.Threading.Tasks;
 
 namespace CommunicatorSocket
 {
-    public class User
-    {
-        public string nick;
-        public ChatWindow chat;
-        private Serwer serwer;
-        private string loginNick;
-        private String allMessages;
-        private bool showChat;
-        public User(string nick, string loginNick, Serwer serwer)
-        {
-            this.nick = nick;
-            this.serwer = serwer;
-            this.loginNick = loginNick;
-            
-            this.chat = new ChatWindow(this.nick, this.loginNick, this.serwer, this.allMessages, this);
-            this.showChat = true;
-            var t = Task.Run(() =>
-            {
-                Application.Run(this.chat);
-            });
-        }
-
-        public void addMessage(string time, string text)
-        {
-            this.chat.addMessage(time, text);
-        }
-
-        public void hide()
-        {
-            if (this.showChat)
-            {
-                this.showChat = false;
-                this.chat.Dispose();
-            }
-
-        }
-
-        public void show()
-        {
-            if (!this.showChat)
-            {
-                this.chat = new ChatWindow(this.nick, this.loginNick, this.serwer, this.allMessages, this);
-                var t = Task.Run(() =>
-                {
-                    Application.Run(this.chat);
-                });
-                t.Wait();
-            }
-        }
-
-        public void saveMessages(string allMessages)
-        {
-            this.allMessages = allMessages;
-        }
-    }
-
     public class Serwer
     {
         public const int TYPE_LOGIN = 1;
@@ -80,6 +24,8 @@ namespace CommunicatorSocket
         private string port;
         private Socket socketFd;
         private Login login;
+        private CancellationTokenSource mainWindowTokenSource;
+        private CancellationTokenSource loginWindowTokenSource;
         private MainWindow mainWindow;
         private List<User> users;
         public bool work;
@@ -87,21 +33,23 @@ namespace CommunicatorSocket
         private string password;
         private bool connecting;
 
-
         public Serwer()
         {
             this.users = new List<User>();
             this.work = true;
             this.connecting = false;
+            this.mainWindowTokenSource = new CancellationTokenSource();
+            this.loginWindowTokenSource = new CancellationTokenSource();
         }
 
         public void showLoginWindow()
         {
+            var token = this.loginWindowTokenSource.Token;
             var t = Task.Run(() =>
             {
-                this.login = new Login(this);
+                this.login = new Login(this, this.loginWindowTokenSource);
                 Application.Run(this.login);
-            });
+            }, token);
             t.Wait();
         }
 
@@ -143,11 +91,12 @@ namespace CommunicatorSocket
 
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                this.mainWindow = new MainWindow(this, this.loginNick);
+                var token = this.mainWindowTokenSource.Token;
+                this.mainWindow = new MainWindow(this, this.loginNick, this.mainWindowTokenSource);
                 var t = Task.Run(() =>
                 {
                     Application.Run(this.mainWindow);
-                });
+                }, token);
                 t.Wait();
 
             }

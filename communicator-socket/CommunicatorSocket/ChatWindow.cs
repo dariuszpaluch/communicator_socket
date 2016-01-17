@@ -5,6 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CommunicatorSocket
 {
@@ -19,7 +21,8 @@ namespace CommunicatorSocket
         private string loginNick;
         private User user;
         private Form obj;
-        public ChatWindow(string nick, string loginNick, Serwer serwer, string allMessages, User user)
+        private CancellationTokenSource tokenSource;
+        public ChatWindow(string nick, string loginNick, Serwer serwer, string allMessages, User user, CancellationTokenSource tokenSource)
         {
             InitializeComponent();
             this.obj = this;
@@ -32,6 +35,7 @@ namespace CommunicatorSocket
             Console.WriteLine(allMessages);
             this.setMessages(this.allMessages);
             this.user = user;
+            this.tokenSource = tokenSource;
         }
 
         public void addMessage(string message)
@@ -94,6 +98,7 @@ namespace CommunicatorSocket
         {
             this.user.saveMessages(this.allMessages);
             this.serwer.removeUser(this.nick);
+            tokenSource.Dispose();
         }
 
         private void MessageTextBox_KeyPress(object sender, KeyPressEventArgs e)

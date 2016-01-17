@@ -5,6 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CommunicatorSocket
 {
@@ -12,16 +14,18 @@ namespace CommunicatorSocket
     {
         private Form obj;
         private Serwer serwer;
+        private CancellationTokenSource tokenSource;
         delegate void setThreadedStatusLabelCallback(String text);
         delegate void setThreadedClose();
         bool loginInStatus;
 
-        public Login(Serwer serwer)
+        public Login(Serwer serwer, CancellationTokenSource tokenSource)
         {
             InitializeComponent();
             this.serwer = serwer;
             this.obj = this;
             this.loginInStatus = false;
+            this.tokenSource = tokenSource;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -81,6 +85,8 @@ namespace CommunicatorSocket
         {
             if (!this.loginInStatus)
                 this.serwer.closeConnection();
+
+            this.tokenSource.Dispose();
         }
 
         public void setLoginInStatus(bool status)
