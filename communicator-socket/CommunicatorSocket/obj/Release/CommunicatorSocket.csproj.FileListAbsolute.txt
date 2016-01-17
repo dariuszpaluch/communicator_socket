@@ -1,0 +1,11 @@
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\bin\Release\CommunicatorSocket.exe.config
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Release\CommunicatorSocket.ChatWindow.resources
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Release\CommunicatorSocket.Login.resources
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Release\CommunicatorSocket.MainWindow.resources
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Release\CommunicatorSocket.MessagesWindows.resources
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Release\CommunicatorSocket.Properties.Resources.resources
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Release\CommunicatorSocket.csproj.GenerateResource.Cache
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\bin\Release\CommunicatorSocket.exe
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\bin\Release\CommunicatorSocket.pdb
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Release\CommunicatorSocket.exe
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Release\CommunicatorSocket.pdb

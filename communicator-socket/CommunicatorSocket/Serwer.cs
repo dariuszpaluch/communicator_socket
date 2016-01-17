@@ -44,13 +44,11 @@ namespace CommunicatorSocket
 
         public void showLoginWindow()
         {
-            var token = this.loginWindowTokenSource.Token;
             var t = Task.Run(() =>
             {
-                this.login = new Login(this, this.loginWindowTokenSource);
+                this.login = new Login(this);
                 Application.Run(this.login);
-            }, token);
-            t.Wait();
+            });
         }
 
         public void sendMessage(string message, string nick)
@@ -380,13 +378,15 @@ namespace CommunicatorSocket
 
         }
 
-        public void closeConnection()
+        public void closeSerwer()
         {
             if (this.connecting)
             {
                 this.socketFd.Shutdown(SocketShutdown.Both);
                 this.socketFd.Close();
             }
+
+            this.work = false;
         }
 
     }
