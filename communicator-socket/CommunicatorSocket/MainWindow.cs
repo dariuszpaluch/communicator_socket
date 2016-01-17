@@ -13,6 +13,7 @@ namespace CommunicatorSocket
     public partial class MainWindow : Form
     {
         delegate void setThreadeSetAllContactsCallback(string contacts);
+
         Form obj;
         private Serwer serwer;
         private List<string> allContacts;

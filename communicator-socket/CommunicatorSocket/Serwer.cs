@@ -292,6 +292,7 @@ namespace CommunicatorSocket
                 this.socketFd.EndConnect(ar);
                 
                 Console.WriteLine("Connected");
+                this.login.setThreadedErrorLabel("Connected");
                 this.connecting = true;
 
                 this.loginInUser(this.loginNick, this.password);
@@ -302,6 +303,7 @@ namespace CommunicatorSocket
             {
                 MessageBox.Show("Exception:\t\n" + exc.Message.ToString());
                 Console.WriteLine("Check \"Server Info\" and try again!");
+                this.login.setThreadedErrorLabel("Check \"Server Info\" and try again!");
             }
         }
 
@@ -355,6 +357,7 @@ namespace CommunicatorSocket
                 /* remote endpoint for the socket */
                 endPoint = new IPEndPoint(addresses[0], Int32.Parse(this.port));
 
+                this.login.setThreadedErrorLabel("Wait! Connecting...");
                 Console.WriteLine("Wait! Connecting...");
 
                 /* connect to the server */
@@ -365,6 +368,7 @@ namespace CommunicatorSocket
             {
                 MessageBox.Show("Exception:\t\n" + exc.Message.ToString());
                 Console.WriteLine("Check \"Server Info\" and try again!");
+                this.login.setThreadedErrorLabel("Check \"Server Info\" and try again!");
             }
         }
 
