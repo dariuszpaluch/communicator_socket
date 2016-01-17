@@ -44,13 +44,11 @@ namespace CommunicatorSocket
 
         public void showLoginWindow()
         {
-            var token = this.loginWindowTokenSource.Token;
             var t = Task.Run(() =>
             {
-                this.login = new Login(this, this.loginWindowTokenSource);
+                this.login = new Login(this);
                 Application.Run(this.login);
-            }, token);
-            t.Wait();
+            });
         }
 
         public void sendMessage(string message, string nick)
@@ -294,6 +292,7 @@ namespace CommunicatorSocket
                 this.socketFd.EndConnect(ar);
                 
                 Console.WriteLine("Connected");
+                this.login.setThreadedErrorLabel("Connected");
                 this.connecting = true;
 
                 this.loginInUser(this.loginNick, this.password);
@@ -304,6 +303,7 @@ namespace CommunicatorSocket
             {
                 MessageBox.Show("Exception:\t\n" + exc.Message.ToString());
                 Console.WriteLine("Check \"Server Info\" and try again!");
+                this.login.setThreadedErrorLabel("Check \"Server Info\" and try again!");
             }
         }
 
@@ -357,6 +357,7 @@ namespace CommunicatorSocket
                 /* remote endpoint for the socket */
                 endPoint = new IPEndPoint(addresses[0], Int32.Parse(this.port));
 
+                this.login.setThreadedErrorLabel("Wait! Connecting...");
                 Console.WriteLine("Wait! Connecting...");
 
                 /* connect to the server */
@@ -367,6 +368,7 @@ namespace CommunicatorSocket
             {
                 MessageBox.Show("Exception:\t\n" + exc.Message.ToString());
                 Console.WriteLine("Check \"Server Info\" and try again!");
+                this.login.setThreadedErrorLabel("Check \"Server Info\" and try again!");
             }
         }
 
@@ -380,13 +382,15 @@ namespace CommunicatorSocket
 
         }
 
-        public void closeConnection()
+        public void closeSerwer()
         {
             if (this.connecting)
             {
                 this.socketFd.Shutdown(SocketShutdown.Both);
                 this.socketFd.Close();
             }
+
+            this.work = false;
         }
 
     }

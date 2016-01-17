@@ -14,18 +14,16 @@ namespace CommunicatorSocket
     {
         private Form obj;
         private Serwer serwer;
-        private CancellationTokenSource tokenSource;
         delegate void setThreadedStatusLabelCallback(String text);
         delegate void setThreadedClose();
         bool loginInStatus;
 
-        public Login(Serwer serwer, CancellationTokenSource tokenSource)
+        public Login(Serwer serwer)
         {
             InitializeComponent();
             this.serwer = serwer;
             this.obj = this;
             this.loginInStatus = false;
-            this.tokenSource = tokenSource;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -84,9 +82,9 @@ namespace CommunicatorSocket
         private void Login_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!this.loginInStatus)
-                this.serwer.closeConnection();
+                this.serwer.closeSerwer();
 
-            this.tokenSource.Dispose();
+            this.Dispose();
         }
 
         public void setLoginInStatus(bool status)
