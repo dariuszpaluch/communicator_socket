@@ -40,6 +40,7 @@ namespace CommunicatorSocket
             }
             else
             {
+                this.allContacts = new List<string>();
                 this.ContactsListBox.Items.Clear();
                 string[] contacts = data.Split(';');
                 for (int i = 1; i < contacts.Length; i++)

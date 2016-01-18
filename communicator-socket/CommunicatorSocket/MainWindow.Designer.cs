@@ -60,7 +60,7 @@
             this.MessageButton.Name = "MessageButton";
             this.MessageButton.Size = new System.Drawing.Size(382, 31);
             this.MessageButton.TabIndex = 5;
-            this.MessageButton.Text = "Otwórz okno rozmowy";
+            this.MessageButton.Text = "Open chat";
             this.MessageButton.UseVisualStyleBackColor = true;
             this.MessageButton.Click += new System.EventHandler(this.MessageButton_Click);
             // 
@@ -69,9 +69,9 @@
             this.UsersLabel.AutoSize = true;
             this.UsersLabel.Location = new System.Drawing.Point(3, 16);
             this.UsersLabel.Name = "UsersLabel";
-            this.UsersLabel.Size = new System.Drawing.Size(157, 13);
+            this.UsersLabel.Size = new System.Drawing.Size(59, 13);
             this.UsersLabel.TabIndex = 4;
-            this.UsersLabel.Text = "Lista dostępnych użytkowników";
+            this.UsersLabel.Text = "Contact list";
             // 
             // MainWindow
             // 

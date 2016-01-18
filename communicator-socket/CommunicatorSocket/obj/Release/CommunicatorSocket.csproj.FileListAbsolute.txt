@@ -8,3 +8,4 @@ C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\Communi
 C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\bin\Release\CommunicatorSocket.pdb
 C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Release\CommunicatorSocket.exe
 C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Release\CommunicatorSocket.pdb
+C:\Users\dariu\Documents\communicator_socket_dpaluch\communicator-socket\CommunicatorSocket\obj\Release\CommunicatorSocket.csprojResolveAssemblyReference.cache

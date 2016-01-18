@@ -83,10 +83,14 @@ namespace CommunicatorSocket
         public void sendMessage()
         {
             string message = this.MessageTextBox.Text;
-            this.MessageTextBox.Text = "";
-            this.serwer.sendMessage(message, this.nick);
-            this.addMessage(message);
-            this.MessageTextBox.Focus();
+
+                if (message.Length > 0) {
+                    this.MessageTextBox.Text = "";
+                    this.serwer.sendMessage(message, this.nick);
+                    this.addMessage(message);
+                    this.MessageTextBox.Focus();
+                }
+
         }
 
         public void funData(String text)
@@ -124,7 +128,6 @@ namespace CommunicatorSocket
 
         private void ChatWindow_Activated(object sender, EventArgs e)
         {
-            Console.WriteLine("DZIAŁA");
             this.MessageTextBox.Focus();
 
         }

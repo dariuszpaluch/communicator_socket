@@ -58,6 +58,7 @@ namespace CommunicatorSocket
         {
             if (!this.showChat)
             {
+                this.tokenSource = new CancellationTokenSource();
                 var token = tokenSource.Token;
                 this.chat = new ChatWindow(this.nick, this.loginNick, this.serwer, this.allMessages, this, tokenSource);
                 var t = Task.Run(() =>
