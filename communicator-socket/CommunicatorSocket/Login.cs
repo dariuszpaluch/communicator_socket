@@ -15,6 +15,7 @@ namespace CommunicatorSocket
         private Form obj;
         private Serwer serwer;
         delegate void setThreadedStatusLabelCallback(String text);
+        delegate void setThreadedChangeAllActiveCallback(bool status);
         delegate void setThreadedClose();
         bool loginInStatus;
 
@@ -42,13 +43,22 @@ namespace CommunicatorSocket
             }
         }
 
-        private void changeEnabledAllItems(bool status)
+        public void changeEnabledAllItems(bool status)
         {
-            this.LoginTextBox.Enabled = status;
-            this.PasswordTextBox.Enabled = status;
-            this.AddressTextBox.Enabled = status;
-            this.PortTextBox.Enabled = status;
-            this.LoginInButton.Enabled = status;
+            if (this.ErrorLabel.InvokeRequired)
+            {
+                setThreadedChangeAllActiveCallback changeAllActiveCallback = new setThreadedChangeAllActiveCallback(changeEnabledAllItems);
+                this.obj.Invoke(changeAllActiveCallback, status);
+            }
+            else
+            {
+                this.LoginTextBox.Enabled = status;
+                this.PasswordTextBox.Enabled = status;
+                this.AddressTextBox.Enabled = status;
+                this.PortTextBox.Enabled = status;
+                this.LoginInButton.Enabled = status;
+            }
+
         }
 
         public void setThreadedErrorLabel(String text)

@@ -61,7 +61,7 @@
             this.SendButton.Name = "SendButton";
             this.SendButton.Size = new System.Drawing.Size(129, 55);
             this.SendButton.TabIndex = 2;
-            this.SendButton.Text = "Wyślij";
+            this.SendButton.Text = "Send";
             this.SendButton.UseVisualStyleBackColor = true;
             this.SendButton.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -70,9 +70,9 @@
             this.MessageLabel.AutoSize = true;
             this.MessageLabel.Location = new System.Drawing.Point(12, 372);
             this.MessageLabel.Name = "MessageLabel";
-            this.MessageLabel.Size = new System.Drawing.Size(92, 13);
+            this.MessageLabel.Size = new System.Drawing.Size(50, 13);
             this.MessageLabel.TabIndex = 3;
-            this.MessageLabel.Text = "Treść wiadomości";
+            this.MessageLabel.Text = "Message";
             // 
             // ChatWindow
             // 
