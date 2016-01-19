@@ -145,7 +145,14 @@ namespace CommunicatorSocket
                 if (this.users[i].nick == nick)
                 {
                     exist = true;
-                    this.users[i].addMessage(time, message);
+                    if (this.users[i].getShowChat())
+                    {
+                        this.users[i].addMessage(time, message);
+                    }
+                    else
+                    {
+                        this.users[i].showAndMessage(time, message);
+                    }
                     break;
                 }
                   

@@ -57,8 +57,9 @@ namespace CommunicatorSocket
             {
                 this.allMessages += this.nick + " " + time + "\n" + text + " \n\n\n";
                 this.MessagesRichTextBox.Text = this.allMessages;
-                this.MessagesRichTextBox.SelectionStart = this.MessagesRichTextBox.TextLength;
+                //this.MessagesRichTextBox.SelectionStart = this.MessagesRichTextBox.TextLength;
                 this.MessagesRichTextBox.ScrollToCaret();
+                this.user.saveMessages(this.allMessages);
             }
         }
 
