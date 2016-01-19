@@ -32,7 +32,7 @@ namespace CommunicatorSocket
         private string loginNick;
         private string password;
         private bool connecting;
-
+        private bool mainWindowOpen;
         public Serwer()
         {
             this.users = new List<User>();
@@ -40,6 +40,7 @@ namespace CommunicatorSocket
             this.connecting = false;
             this.mainWindowTokenSource = new CancellationTokenSource();
             this.loginWindowTokenSource = new CancellationTokenSource();
+            this.mainWindowOpen = false;
         }
 
         public void showLoginWindow()
@@ -62,6 +63,7 @@ namespace CommunicatorSocket
             Console.WriteLine("SEND: " + type + ";" + data + "|");
             byte[] byteData = Encoding.ASCII.GetBytes(type + ";" + data + "|");
             this.socketFd.BeginSend(byteData, 0, byteData.Length, 0, new AsyncCallback(SendCallback), this.socketFd);
+            this.readMessages();
         }
 
         public void loginInUser(string loginNick, string password)
@@ -87,6 +89,7 @@ namespace CommunicatorSocket
                 this.login.setLoginInStatus(true);
                 this.login.setThreadedCloseForm();
 
+
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 var token = this.mainWindowTokenSource.Token;
@@ -101,7 +104,10 @@ namespace CommunicatorSocket
             else
             {
                 if (messageSplit.Length > 2)
+                {
                     this.login.setThreadedErrorLabel(messageSplit[2]);
+                    this.login.changeEnabledAllItems(true);
+                }
             }
         }
 
@@ -122,6 +128,7 @@ namespace CommunicatorSocket
 
         private void handleContacts(string data)
         {
+            System.Console.Write(this.mainWindow);
             this.mainWindow.setContacts(data);
         }
 
@@ -138,7 +145,14 @@ namespace CommunicatorSocket
                 if (this.users[i].nick == nick)
                 {
                     exist = true;
-                    this.users[i].addMessage(time, message);
+                    if (this.users[i].getShowChat())
+                    {
+                        this.users[i].addMessage(time, message);
+                    }
+                    else
+                    {
+                        this.users[i].showAndMessage(time, message);
+                    }
                     break;
                 }
                   
@@ -233,6 +247,8 @@ namespace CommunicatorSocket
                     break;
             }
 
+
+
         }
 
         private void ReceiveCallback(IAsyncResult ar)
@@ -276,7 +292,8 @@ namespace CommunicatorSocket
             }
             catch (Exception exc)
             {
-                MessageBox.Show("Exception:\t\n" + exc.Message.ToString());
+                //MessageBox.Show("Exception:\t\n" + exc.Message.ToString());
+                this.login.setThreadedErrorLabel("Check \"Server Info\" and try again!");
                 Console.WriteLine("Check \"Server Info\" and try again!");
             }
         }
@@ -301,7 +318,7 @@ namespace CommunicatorSocket
             }
             catch (Exception exc)
             {
-                MessageBox.Show("Exception:\t\n" + exc.Message.ToString());
+                //MessageBox.Show("Exception:\t\n" + exc.Message.ToString());
                 Console.WriteLine("Check \"Server Info\" and try again!");
                 this.login.setThreadedErrorLabel("Check \"Server Info\" and try again!");
             }
@@ -328,7 +345,7 @@ namespace CommunicatorSocket
                 // Complete sending the data to the remote device.
                 int bytesSent = client.EndSend(ar);
                 Console.WriteLine("Sent {0} bytes to server.", bytesSent);
-                this.readMessages();
+                //this.readMessages();
                 // Signal that all bytes have been sent.
                 //sendDone.Set();
             }
@@ -366,7 +383,7 @@ namespace CommunicatorSocket
             }
             catch (Exception exc)
             {
-                MessageBox.Show("Exception:\t\n" + exc.Message.ToString());
+                //MessageBox.Show("Exception:\t\n" + exc.Message.ToString());
                 Console.WriteLine("Check \"Server Info\" and try again!");
                 this.login.setThreadedErrorLabel("Check \"Server Info\" and try again!");
             }

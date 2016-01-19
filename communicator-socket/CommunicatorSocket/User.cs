@@ -58,19 +58,42 @@ namespace CommunicatorSocket
         {
             if (!this.showChat)
             {
+                this.tokenSource = new CancellationTokenSource();
                 var token = tokenSource.Token;
                 this.chat = new ChatWindow(this.nick, this.loginNick, this.serwer, this.allMessages, this, tokenSource);
+                this.showChat = true;
                 var t = Task.Run(() =>
                 {
                     Application.Run(this.chat);
                 }, token);
-                t.Wait();
             }
+        }
+
+        public void showAndMessage(string time, string message)
+        {
+            if (!this.showChat)
+            {
+                this.tokenSource = new CancellationTokenSource();
+                var token = tokenSource.Token;
+                this.allMessages += this.nick + " " + time + "\n" + message + " \n\n\n";
+                this.chat = new ChatWindow(this.nick, this.loginNick, this.serwer, this.allMessages, this, tokenSource);
+                this.showChat = true;
+                var t = Task.Run(() =>
+                {
+                    Application.Run(this.chat);
+                }, token);
+            }
+
         }
 
         public void saveMessages(string allMessages)
         {
             this.allMessages = allMessages;
+        }
+
+        public bool getShowChat()
+        {
+            return this.showChat;
         }
     }
 }
